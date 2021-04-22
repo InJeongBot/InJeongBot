@@ -15,6 +15,8 @@ from urllib.parse import quote_plus
 
 import random
 
+import os
+
 bot = commands.Bot(command_prefix='/')
 
 
