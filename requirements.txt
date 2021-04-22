@@ -2,9 +2,10 @@ asyncio==3.4.3
 selenium==3.141.0
 discord.py[voice]==1.7.1
 beautifulsoup4==4.9.3
+pip==20.2.3
 youtube-dl==2021.4.17
 ffmpeg-python==
 requests==2.25.1
 lxml==4.6.3
-urllib3
+urllib3==1.26.4
 Options
