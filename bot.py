@@ -10,9 +10,6 @@ from discord.utils import get
 from discord import FFmpegPCMAudio
 import os
 
-access_token = os.environ["BOT_TOKEN"]
-TOKEN = 'access_token'
-
 bot = commands.Bot(command_prefix='!')
 
 @bot.event
@@ -73,5 +70,6 @@ async def 게임의신(ctx):
     embed.set_image(url="https://cdn.discordapp.com/attachments/754206116380016683/834487987555401758/2ff903bb2d0e9650.jpg")
     await ctx.channel.send(embed=embed)
 
-
+access_token = os.environ["BOT_TOKEN"]
+TOKEN = 'access_token'
 bot.run(TOKEN)
