@@ -23,11 +23,6 @@ bot = commands.Bot(command_prefix='/')
 @bot.event
 async def on_ready():
     await bot.change_presence(status=discord.Status.online, activity=discord.Game('안녕'))
-    bot.user.name = '인정'
-    print('Logging')
-    print(bot.user.name)
-    print('TOKEN =', TOKEN)
-    print('Successly access')
 
 @bot.event
 async def on_message(msg):
@@ -70,8 +65,6 @@ async def play(ctx, *, msg):
         vc.play(FFmpegPCMAudio(URL, **FFMPEG_OPTIONS))
     else:
         await ctx.send("이미 노래가 재생 중 입니다.")
-    print('musicurl =', musicurl)
-
 
 
 @bot.command()
@@ -95,7 +88,7 @@ async def n(ctx, *, keyword):
             else:
                 links.append(link)
                 n += 1
-    print(links)
+
     if n > 0 :
         r = random.randint(0,n)
         embed = discord.Embed(title= keyword, color = 0x00ff00)
@@ -129,7 +122,7 @@ async def g(ctx, *, keyword):
             else:
                 links.append(link)
                 n += 1
-    print(links)
+
     if n > 0 :
         r = random.randint(0,n)
         embed = discord.Embed(title= keyword, color = 0x00ff00)
