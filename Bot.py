@@ -27,9 +27,6 @@ async def on_ready():
     print('TOKEN =', TOKEN)
     print('Successly access')
 
-    if not discord.opus.is_loaded():
-        discord.opus.load_opus('opus')
-
 def load_chrome_driver():
       
     options = webdriver.ChromeOptions()
