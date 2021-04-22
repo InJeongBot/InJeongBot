@@ -139,6 +139,6 @@ async def g(ctx, *, keyword):
         embed = discord.Embed(title= '검색결과 없음', color = 0x00ff00)
     await ctx.send(embed=embed)
 
-access_token = os.environ['BOT_TOKEN']
-TOKEN = 'access_token'
+TOKEN = os.environ['BOT_TOKEN']
+
 bot.run(TOKEN)
