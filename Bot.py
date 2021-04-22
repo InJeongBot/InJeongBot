@@ -151,5 +151,5 @@ async def g(ctx, *, keyword):
     await ctx.send(embed=embed)
 
 
-TOKEN = os.environ('BOT_TOKEN')
+TOKEN = os.environ['BOT_TOKEN']
 bot.run(TOKEN)
