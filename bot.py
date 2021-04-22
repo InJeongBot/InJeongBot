@@ -8,9 +8,17 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from discord.utils import get
 from discord import FFmpegPCMAudio
-import os
 
-bot = commands.Bot(command_prefix='!')
+from urllib.request import urlopen
+from bs4 import BeautifulSoup as bs
+from urllib.parse import quote_plus
+
+import random
+
+TOKEN = 'ODM0NjkzODUwNTM4MTgwNjE4.YIEnOQ.WQqknMQ03On-tgx4rCJF2b2y3I4'
+
+bot = commands.Bot(command_prefix='/')
+
 
 @bot.event
 async def on_ready():
@@ -64,11 +72,74 @@ async def play(ctx, *, msg):
         await ctx.send("이미 노래가 재생 중 입니다.")
     print('musicurl =', musicurl)
 
+
+
 @bot.command()
-async def 게임의신(ctx):
-    embed = discord.Embed(title='게임의 신', description='키무라')
-    embed.set_image(url="https://cdn.discordapp.com/attachments/754206116380016683/834487987555401758/2ff903bb2d0e9650.jpg")
-    await ctx.channel.send(embed=embed)
+async def n(ctx, *, keyword):
+    chromedriver_dir = r"C:\Users\tmvls\Desktop\디스코드 봇\chromedriver_win32\chromedriver.exe"
+    driver = webdriver.Chrome(executable_path=chromedriver_dir)
+    driver.implicitly_wait(5)
+    driver.get("https://search.naver.com/search.naver?where=image&sm=tab_jum&query="+ keyword)
+
+    imgs = driver.find_elements_by_tag_name('img')
+    
+    links = []
+    n = -1
+    for img in imgs :
+        if n > 4 :
+            break
+        link = str(img.get_attribute('src'))
+        if 'http' in link :
+            if 'logos' in link :
+                continue
+            else:
+                links.append(link)
+                n += 1
+    print(links)
+    if n > 0 :
+        r = random.randint(0,n)
+        embed = discord.Embed(title= keyword, color = 0x00ff00)
+        embed.set_image(url = links[r])
+    elif n == 0 :
+        embed = discord.Embed(title= keyword, color = 0x00ff00)
+        embed.set_image(url = links[0])
+    else :
+        embed = discord.Embed(title= '검색결과 없음', color = 0x00ff00)
+    await ctx.send(embed=embed)
+
+
+@bot.command()
+async def g(ctx, *, keyword):
+    chromedriver_dir = r"C:\Users\tmvls\Desktop\디스코드 봇\chromedriver_win32\chromedriver.exe"
+    driver = webdriver.Chrome(executable_path=chromedriver_dir)
+    driver.implicitly_wait(5)
+    driver.get("https://www.google.co.kr/search?q="+ keyword +"&source=lnms&tbm=isch&sa=X&ved=2ahUKEwjJ3uOx2JHwAhWMOpQKHQxdAI0Q_AUoAXoECAEQAw&biw=1920&bih=969")
+    
+    imgs = driver.find_elements_by_css_selector('.rg_i.Q4LuWd')
+    
+    links = []
+    n = -1
+    for img in imgs :
+        if n > 4 :
+            break
+        link = str(img.get_attribute('src'))
+        if 'http' in link :
+            if 'logos' in link :
+                continue
+            else:
+                links.append(link)
+                n += 1
+    print(links)
+    if n > 0 :
+        r = random.randint(0,n)
+        embed = discord.Embed(title= keyword, color = 0x00ff00)
+        embed.set_image(url = links[r])
+    elif n == 0 :
+        embed = discord.Embed(title= keyword, color = 0x00ff00)
+        embed.set_image(url = links[0])
+    else :
+        embed = discord.Embed(title= '검색결과 없음', color = 0x00ff00)
+    await ctx.send(embed=embed)
 
 access_token = os.environ["BOT_TOKEN"]
 TOKEN = 'access_token'
