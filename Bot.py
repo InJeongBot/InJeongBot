@@ -37,7 +37,7 @@ def load_chrome_driver():
     # options.add_argument('--disable-gpu')
     options.add_argument('--no-sandbox')
 
-    return webdriver.Chrome(executable_path=str(os.environ.get('CHROME_EXECUTABLE_PATH')), chrome_options=options)
+    return webdriver.Chrome(executable_path=str(os.environ.get('C:\Users\tmvls\Desktop\디스코드 봇\chromedriver_win32\chromedriver.exe')), chrome_options=options)
 
 
 
