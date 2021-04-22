@@ -8,10 +8,10 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from discord.utils import get
 from discord import FFmpegPCMAudio
+import os
 
-
-
-TOKEN = 'ODM0NjkzODUwNTM4MTgwNjE4.YIEnOQ.ZC2i9Axfp57umurxAf8F0N9cl30'
+access_token = os.environ["BOT_TOKEN"]
+TOKEN = 'access_token'
 
 bot = commands.Bot(command_prefix='!')
 
