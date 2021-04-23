@@ -93,7 +93,8 @@ async def n(ctx, *, keyword):
     driver = load_chrome_driver()
     driver.implicitly_wait(5)
     driver.get("https://search.naver.com/search.naver?where=image&sm=tab_jum&query="+ keyword)
-
+    driver.maximaize_window()
+    
     imgs = driver.find_elements_by_tag_name('img')
     
     links = []
@@ -126,8 +127,9 @@ async def g(ctx, *, keyword):
     driver = load_chrome_driver()
     driver.implicitly_wait(5)
     driver.get("https://www.google.co.kr/search?q="+ keyword +"&source=lnms&tbm=isch&sa=X&ved=2ahUKEwjJ3uOx2JHwAhWMOpQKHQxdAI0Q_AUoAXoECAEQAw&biw=1920&bih=969")
+    driver.maximaize_window()
     
-    imgs = driver.find_elements_by_css_selector('.rg_i.Q4LuWd')
+    imgs = driver.find_elements_by_css_selector('.rg_i Q4LuWd')
     
     links = []
     n = -1
