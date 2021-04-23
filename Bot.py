@@ -53,9 +53,7 @@ async def on_message(msg):
 @bot.event
 async def 도움말(ctx):
     embed = discord.Embed(title="인정봇", description="사용법", color=0x00ff00)
-    embed.set_author(name="인정\#6079", icon_url= )
-    embed=discord.Embed(title="Embed", description="Embed 내용.", color=0x00aaaa)
-    embed.set_author(name="작성자의 이름",icon_url=message.author.avatar_url)
+    embed.set_author(name="인정\#6079", icon_url=message.author.avatar_url)
     embed.add_field(name = "명령어1", value = "/join", inline = True)
     embed.add_field(name = "명령어2", value = "/leave", inline = True)
     embed.add_field(name = "명령어3", value = "/n 내용", inline = True)
