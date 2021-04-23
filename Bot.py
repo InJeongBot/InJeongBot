@@ -149,39 +149,42 @@ async def play(ctx, *, msg):
     except:
         try:
             await vc.move_to(ctx.message.author.voice.channel)
+            
+            if not vc.is_playing():
+                global entireText
+                YDL_OPTIONS = {'format': 'bestaudio', 'noplaylist':'True'}
+                FFMPEG_OPTIONS = {'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5', 'options': '-vn'}
+                    
+                driver = load_chrome_driver()
+                driver.get("https://www.youtube.com/results?search_query="+msg+"+lyrics")
+                source = driver.page_source
+                bs = bs4.BeautifulSoup(source, 'lxml')
+                entire = bs.find_all('a', {'id': 'video-title'})
+                entireNum = entire[0]
+                entireText = entireNum.text.strip()
+                musicurl = entireNum.get('href')
+                url = 'https://www.youtube.com'+musicurl
+                video_number = musicurl[9:]
+                image_type = '0'
+                thumbnail = 'http://img.youtube.com/vi/'+ video_number +'/'+ image_type +'.jpg'
+
+                music_now.insert(0, entireText)
+                with YoutubeDL(YDL_OPTIONS) as ydl:
+                    info = ydl.extract_info(url, download=False)
+                URL = info['formats'][0]['url']
+                embed = discord.Embed(title= "노래 재생", description = entireText, color = 0x00ff00)
+                embed.set_image(url = thumbnail)
+                await ctx.send(embed=embed)
+                vc.play(discord.FFmpegPCMAudio(URL, **FFMPEG_OPTIONS), after=lambda e: music_play_next(ctx))
+            else:
+                music_user.append(msg)
+                result, URLTEST = f_music_title(msg)
+                music_queue.append(URLTEST)
+        
         except:
             await ctx.send("채널에 접속해 주세요")
 
-    if not vc.is_playing():
-        global entireText
-        YDL_OPTIONS = {'format': 'bestaudio', 'noplaylist':'True'}
-        FFMPEG_OPTIONS = {'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5', 'options': '-vn'}
-            
-        driver = load_chrome_driver()
-        driver.get("https://www.youtube.com/results?search_query="+msg+"+lyrics")
-        source = driver.page_source
-        bs = bs4.BeautifulSoup(source, 'lxml')
-        entire = bs.find_all('a', {'id': 'video-title'})
-        entireNum = entire[0]
-        entireText = entireNum.text.strip()
-        musicurl = entireNum.get('href')
-        url = 'https://www.youtube.com'+musicurl
-        video_number = musicurl[9:]
-        image_type = '0'
-        thumbnail = 'http://img.youtube.com/vi/'+ video_number +'/'+ image_type +'.jpg'
-
-        music_now.insert(0, entireText)
-        with YoutubeDL(YDL_OPTIONS) as ydl:
-            info = ydl.extract_info(url, download=False)
-        URL = info['formats'][0]['url']
-        embed = discord.Embed(title= "노래 재생", description = entireText, color = 0x00ff00)
-        embed.set_image(url = thumbnail)
-        await ctx.send(embed=embed)
-        vc.play(discord.FFmpegPCMAudio(URL, **FFMPEG_OPTIONS), after=lambda e: music_play_next(ctx))
-    else:
-        music_user.append(msg)
-        result, URLTEST = f_music_title(msg)
-        music_queue.append(URLTEST)
+        
     print('musicurl =', musicurl)
 
 
@@ -233,7 +236,7 @@ async def 목록초기화(ctx):
                 del music_now[ex]
             except:
                 break
-        await ctx.send(embed = discord.Embed(title= "목록초기화", description = """목록이 정상적으로 초기화되었습니다""", color = 0x00ff00))
+        await ctx.send("목록이 초기화 되었습니다")
     except:
         await ctx.send("노래를 등록해주세요")
 
@@ -252,7 +255,7 @@ async def 목록재생(ctx):
             for i in range(len(music_now) - len(music_user)):
                 del music_now[0]
         if not vc.is_playing():
-            play(ctx)
+            music_play(ctx)
         else:
             await ctx.send("노래가 이미 재생되고 있어요!")
 
@@ -289,6 +292,11 @@ async def 다시재생(ctx):
 async def stop(ctx):
     if vc.is_playing():
         vc.stop()
+        global number
+        number = 0
+        
+        client.loop.create_task(vc.disconnect())
+        
     else:
         await ctx.send("노래를 재생하고 있지 않네요")
 
