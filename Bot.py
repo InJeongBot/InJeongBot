@@ -86,10 +86,8 @@ def music_play_next(ctx):
             del music_title[0]
             del music_queue[0]
             vc.play(discord.FFmpegPCMAudio(URL,**FFMPEG_OPTIONS), after=lambda e: music_play_next(ctx))
+
             
-            await ctx.edit(embed = discord.Embed(title = "노래", description = Text.strip(), color = 0x00ff00))
-
-
 # Event 디스코드 시작
 @bot.event
 async def on_ready():
@@ -183,6 +181,9 @@ async def play(ctx, *, msg):
                 music_user.append(msg)
                 result, URLTEST = f_music_title(msg)
                 music_queue.append(URLTEST)
+
+        
+    print('musicurl =', musicurl)
 
 
 # Command /대기열삭제 (숫자)
