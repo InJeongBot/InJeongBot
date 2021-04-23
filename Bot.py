@@ -30,6 +30,7 @@ music_now = []
 # f_music_title 함수
 def f_music_title(msg):
     global music
+    global Text
     
     YDL_OPTIONS = {'format': 'bestaudio', 'noplaylist':'True'}
     FFMPEG_OPTIONS = {'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5', 'options': '-vn'}
@@ -85,6 +86,8 @@ def music_play_next(ctx):
             del music_title[0]
             del music_queue[0]
             vc.play(discord.FFmpegPCMAudio(URL,**FFMPEG_OPTIONS), after=lambda e: music_play_next(ctx))
+            
+            await ctx.edit(embed = discord.Embed(title = "노래", description = Text.strip(), color = 0x00ff00))
 
 
 # Event 디스코드 시작
@@ -136,7 +139,7 @@ async def join(ctx):
 # Command /leave
 @bot.command()
 async def leave(ctx):
-    client.loop.create_task(vc.disconnect())
+    await ctx.message.voice.channel.disconnect()
 
     
 # Command /play 노래제목
@@ -179,10 +182,7 @@ async def play(ctx, *, msg):
             else:
                 music_user.append(msg)
                 result, URLTEST = f_music_title(msg)
-                music_queue.append(URLTEST)
-        
-        except:
-            await ctx.send("채널에 접속해 주세요")
+                music_queue.append(URLTEST) 
 
         
     print('musicurl =', musicurl)
@@ -295,7 +295,7 @@ async def stop(ctx):
         global number
         number = 0
         
-        client.loop.create_task(vc.disconnect())
+        await ctx.message.voice.channel.disconnect()
         
     else:
         await ctx.send("노래를 재생하고 있지 않네요")
