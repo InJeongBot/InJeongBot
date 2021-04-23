@@ -129,7 +129,7 @@ async def g(ctx, *, keyword):
     driver.get("https://www.google.co.kr/search?q="+ keyword +"&source=lnms&tbm=isch&sa=X&ved=2ahUKEwjJ3uOx2JHwAhWMOpQKHQxdAI0Q_AUoAXoECAEQAw&biw=1920&bih=969")
     driver.maximize_window()
     
-    imgs = driver.find_elements_by_css_selector('.rg_i Q4LuWd')
+    imgs = driver.find_elements_by_css_selector('.rg_i.Q4LuWd')
     
     links = []
     n = -1
