@@ -50,7 +50,7 @@ async def on_message(msg):
     await bot.process_commands(msg)
     
     
-@bot.event
+@bot.command()
 async def 도움말(ctx):
     embed = discord.Embed(title="인정봇", description="사용법", color=0x00ff00)
     embed.set_author(name="인정\#6079", icon_url=message.author.avatar_url)
