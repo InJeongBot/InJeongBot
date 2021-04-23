@@ -66,10 +66,10 @@ def music_play(ctx):
     del music_queue[0]
     
     vc = get(bot.voice_clients, guild = ctx.guild)
-    
+    '''
     if not vc.is_playing():
         vc.play(FFmpegPCMAudio(URL, **FFMPEG_OPTIONS), after=lambda e: music_play_next(ctx)) 
-
+'''
 
 # music_play_next 함수
 def music_play_next(ctx):
@@ -86,6 +86,7 @@ def music_play_next(ctx):
             del music_title[0]
             del music_queue[0]
             vc.play(discord.FFmpegPCMAudio(URL,**FFMPEG_OPTIONS), after=lambda e: music_play_next(ctx))
+
 
             
 # Event 디스코드 시작
@@ -181,7 +182,9 @@ async def play(ctx, *, msg):
                 music_user.append(msg)
                 result, URLTEST = f_music_title(msg)
                 music_queue.append(URLTEST)
-
+            
+        except:
+            await ctx.send("채널에 접속해 주세요")
         
     print('musicurl =', musicurl)
 
@@ -367,6 +370,7 @@ async def g(ctx, *, keyword):
     else :
         embed = discord.Embed(title= '검색결과 없음', color = 0x00ff00)
     await ctx.send(embed=embed)
-
+    
+    
 TOKEN = os.environ['BOT_TOKEN']
 bot.run(TOKEN)
