@@ -48,6 +48,21 @@ def load_chrome_driver():
 async def on_message(msg):
     if msg.author.bot: return None
     await bot.process_commands(msg)
+    
+    
+@bot.event
+async def 도움말(ctx):
+    embed = discord.Embed(title="인정봇", description="사용법", color=0x00ff00)
+    embed.set_author(name="인정\#6079", icon_url= )
+    embed=discord.Embed(title="Embed", description="Embed 내용.", color=0x00aaaa)
+    embed.set_author(name="작성자의 이름",icon_url=message.author.avatar_url)
+    embed.add_field(name = "명령어1", value = "/join", inline = True)
+    embed.add_field(name = "명령어2", value = "/leave", inline = True)
+    embed.add_field(name = "명령어3", value = "/n 내용", inline = True)
+    embed.add_field(name = "명령어4", value = "/g 내용", inline = True)
+    embed.add_field(name = "명령어5", value = "/play 노래제목", inline = True)
+    await ctx.send(embed=embed)
+    
 
 @bot.command()
 async def join(ctx):
