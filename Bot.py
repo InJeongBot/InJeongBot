@@ -182,10 +182,7 @@ async def play(ctx, *, msg):
             else:
                 music_user.append(msg)
                 result, URLTEST = f_music_title(msg)
-                music_queue.append(URLTEST) 
-
-        
-    print('musicurl =', musicurl)
+                music_queue.append(URLTEST)
 
 
 # Command /대기열삭제 (숫자)
