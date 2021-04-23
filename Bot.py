@@ -53,7 +53,11 @@ async def on_message(msg):
 async def join(ctx):
     global vc
     vc = await ctx.message.author.voice.channel.connect()
-    
+
+@bot.command()
+async def leave(ctx):
+    global vc
+    vc = await ctx.message.author.voice.channel.disconnect()
 
 @bot.command()
 async def play(ctx, *, msg):
