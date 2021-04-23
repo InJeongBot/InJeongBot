@@ -7,3 +7,4 @@ youtube-dl
 ffmpeg-python
 requests
 urllib3
+lxml
