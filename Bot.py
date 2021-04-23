@@ -35,7 +35,7 @@ def f_music_title(msg):
     FFMPEG_OPTIONS = {'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5', 'options': '-vn'}
 
     driver = load_chrome_driver()
-    driver.get("https://www.youtube.com/results?search_query="+msg+"+lyrics")
+    driver.get("https://www.youtube.com/results?search_query="+msg)
     source = driver.page_source
     bs = bs4.BeautifulSoup(source, 'lxml')
     entire = bs.find_all('a', {'id': 'video-title'})
@@ -156,7 +156,7 @@ async def play(ctx, *, msg):
                 FFMPEG_OPTIONS = {'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5', 'options': '-vn'}
                     
                 driver = load_chrome_driver()
-                driver.get("https://www.youtube.com/results?search_query="+msg+"+lyrics")
+                driver.get("https://www.youtube.com/results?search_query="+msg)
                 source = driver.page_source
                 bs = bs4.BeautifulSoup(source, 'lxml')
                 entire = bs.find_all('a', {'id': 'video-title'})
@@ -172,7 +172,7 @@ async def play(ctx, *, msg):
                 with YoutubeDL(YDL_OPTIONS) as ydl:
                     info = ydl.extract_info(url, download=False)
                 URL = info['formats'][0]['url']
-                embed = discord.Embed(title= "노래 재생", description = entireText, color = 0x00ff00)
+                embed = discord.Embed(title = entireText, description = "", color = 0x00ff00)
                 embed.set_image(url = thumbnail)
                 await ctx.send(embed=embed)
                 vc.play(discord.FFmpegPCMAudio(URL, **FFMPEG_OPTIONS), after=lambda e: music_play_next(ctx))
