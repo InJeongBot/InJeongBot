@@ -66,10 +66,10 @@ def music_play(ctx):
     del music_queue[0]
     
     vc = get(bot.voice_clients, guild = ctx.guild)
-    '''
+    
     if not vc.is_playing():
         vc.play(FFmpegPCMAudio(URL, **FFMPEG_OPTIONS), after=lambda e: music_play_next(ctx)) 
-'''
+
 
 # music_play_next 함수
 def music_play_next(ctx):
@@ -118,7 +118,7 @@ def load_chrome_driver():
 async def 도움말(ctx):
     embed = discord.Embed(title = "인정봇", description = "", color = 0x00ff00)
     embed.set_author(name = "ㅇㅈ#6079", icon_url = 'https://lh3.googleusercontent.com/-b3wHaZebfC8/YAEp78DCGJI/AAAAAAAAANw/Sk6gws7hEy81VLbZi32vt58dZmUKLZrCQCEwYBhgLKtQDAL1OcqwIQMufwzmCuUW16OknG_oX85sW4RcVXoFEg1Y8q-3JrshwX_Fn2UT8j6sp3whjH82Zxc1gh_IbXm_OihPlY4q8AIUUqBxxkBTexM5P-b2fdBs_gGD0B8o1IICIBIqKj18jGiaQ6x2OcHfZ98dgrywv_SjkVFOBctoMGx5Sucl6l5w1YB1iDmUT3spIg1sTrDko1xZDdRJmFvIdnao_EoMEKKxnHtb3OUI-OQx7jwx2O912DBBRimkvJmk3YEnsWqxGBP74TuIV_DVkhtqAiFi5lDJ3a7OfyCf-U3DuK01BR3rpSvoOaWCJVdye22AQuAJ-PYKAD7rKip7MdIl45Oej3mVH7N53SOt29e-D9ZhohEhUz7vWdUxHdK-AHEz8Gz2kgQTHrYiHX6jeQVejFrYzgNdBefxXFvdEhIkGH9FQT3jO8HaIjwaZhnlmfv2mkFLLubUxIeuh1jf0-qdJvGJSSrRZ0mVhhwChDXzwHbS6MGJ2TCcOBJ638A-72mAh5Y68nOTXBU3wJ9PcbAbP_JK6Z1svl2NEnyhTzCaKgZQp3ayQpAPevAuStMPsGr6Kz67ZTnJWd132m2JLGJ1mUXt0XULEUnv1WmON9Qqh2Gk9MKDziYQG/w139-h140-p/2021-01-14.jpg')
-    embed.add_field(name = "Command", value = "/join /leave /play (노래제목) /n (검색어) /g (검색어) \n /대기열 삭제 (숫자) /목록 /목록초기화 \n /목록재생 /지금노래 /pause /다시재생 /stop", inline = True)
+    embed.add_field(name = "Command", value = "/join /leave /play (노래제목) /n (검색어) /g (검색어) \n/queuedel /queue /queueclear \n/지금노래 /pause /resume /stop", inline = True)
     await ctx.send(embed=embed)
 
 
@@ -138,7 +138,7 @@ async def join(ctx):
 # Command /leave
 @bot.command()
 async def leave(ctx):
-    await ctx.message.voice.channel.disconnect()
+    client.looop.create_task(vc.disconnect())
 
     
 # Command /play 노래제목
@@ -189,9 +189,9 @@ async def play(ctx, *, msg):
     print('musicurl =', musicurl)
 
 
-# Command /대기열삭제 (숫자)
+# Command /queuedel (숫자)
 @bot.command()
-async def 대기열삭제(ctx, *, number):
+async def queuedel(ctx, *, number):
     try:
         ex = len(music_now) - len(music_user)
         del music_user[int(number) - 1]
@@ -210,9 +210,9 @@ async def 대기열삭제(ctx, *, number):
         else:
             await ctx.send("숫자를 입력해주세요!")
 
-# Command /목록
+# Command /queue
 @bot.command()
-async def 목록(ctx):
+async def queue(ctx):
     if len(music_title) == 0:
         await ctx.send("노래를 등록해주세요")
     else:
@@ -224,9 +224,9 @@ async def 목록(ctx):
         await ctx.send(embed = discord.Embed(title = "노래목록", description = Text.strip(), color = 0x00ff00))
 
 
-# Command /목록초기화
+# Command /queueclear
 @bot.command()
-async def 목록초기화(ctx):
+async def queueclear(ctx):
     try:
         ex = len(music_now) - len(music_user)
         del music_user[:]
@@ -279,9 +279,9 @@ async def pause(ctx):
         await ctx.send("노래를 재생하고 있지 않네요")
 
 
-# Command /다시재생
+# Command /resume
 @bot.command()
-async def 다시재생(ctx):
+async def resume(ctx):
     try:
         vc.resume()
     except:
@@ -370,6 +370,7 @@ async def g(ctx, *, keyword):
     else :
         embed = discord.Embed(title= '검색결과 없음', color = 0x00ff00)
     await ctx.send(embed=embed)
+
     
     
 TOKEN = os.environ['BOT_TOKEN']
