@@ -317,6 +317,10 @@ async def stop(ctx):
 # Command /n (내용)
 @bot.command()
 async def n(ctx, *, keyword):
+
+    options = webdriver.ChromeOptions()
+    options.add_argument("headless")
+    
     driver = load_chrome_driver()
     driver.implicitly_wait(5)
     driver.get("https://search.naver.com/search.naver?where=image&sm=tab_jum&query="+ keyword)
@@ -337,6 +341,9 @@ async def n(ctx, *, keyword):
                 links.append(link)
                 n += 1
     print(links)
+    
+    driver.quit()
+    
     if n > 0 :
         r = random.randint(0,n)
         embed = discord.Embed(title= keyword, color = 0x00ff00)
@@ -352,6 +359,10 @@ async def n(ctx, *, keyword):
 # Command /g (내용)
 @bot.command()
 async def g(ctx, *, keyword):
+
+    options = webdriver.ChromeOptions()
+    options.add_argument("headless")
+    
     driver = load_chrome_driver()
     driver.implicitly_wait(5)
     driver.get("https://www.google.co.kr/search?q="+ keyword +"&source=lnms&tbm=isch&sa=X&ved=2ahUKEwjJ3uOx2JHwAhWMOpQKHQxdAI0Q_AUoAXoECAEQAw&biw=1920&bih=969")
@@ -372,6 +383,9 @@ async def g(ctx, *, keyword):
                 links.append(link)
                 n += 1
     print(links)
+
+    driver.quit()
+    
     if n > 0 :
         r = random.randint(0,n)
         embed = discord.Embed(title= keyword, color = 0x00ff00)
