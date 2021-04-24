@@ -26,7 +26,6 @@ music_title = []
 music_queue = []
 music_now = []
 
-
 # f_music_title 함수
 def f_music_title(msg):
     global music
@@ -128,7 +127,7 @@ def load_chrome_driver():
 async def 도움말(ctx):
     embed = discord.Embed(title = "인정봇", description = "", color = 0x00ff00)
     embed.set_author(name = "ㅇㅈ#6079", icon_url = 'http://www.palnews.co.kr/news/photo/201801/92969_25283_5321.jpg')
-    embed.add_field(name = "Command", value = "/join /leave /play (노래제목) /n (검색어) /g (검색어) \n/queuedel (숫자) /queue /queueclear \n/musicinfo /pause /resume /stop", inline = True)
+    embed.add_field(name = "Command", value = "/join /leave /play (노래제목) /n (검색어) /g (검색어) \n/queuedel (숫자) /queue /queueclear \n/musicinfo /pause /resume /skip /stop", inline = True)
     await ctx.send(embed=embed)
 
 
@@ -303,6 +302,23 @@ async def resume(ctx):
     except:
          await ctx.send("노래를 재생하고 있지 않네요")
 
+# Command /skip
+@bot.command()
+async def skip(ctx):
+    if vc.is_playing():
+        if len(music_user) > 1:
+            vc.stop()
+            global number
+            number = 0
+
+            await ctx.send(embed = discord.Embed(title = music_now[0], description = "", color = 0x00ff00))
+        else:
+            await ctx.send("스킵할 노래가 없네요")
+    else:
+        await ctx.send("노래를 재생하고 있지 않네요")
+
+            
+
 
 # Command /stop
 @bot.command()
@@ -400,8 +416,6 @@ async def g(ctx, *, keyword):
     else :
         embed = discord.Embed(title= '검색결과 없음', color = 0x00ff00)
     await ctx.send(embed=embed)
-
-
     
     
 TOKEN = os.environ['BOT_TOKEN']
