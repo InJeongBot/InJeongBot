@@ -93,6 +93,10 @@ def music_play_next(ctx):
             
             vc.play(discord.FFmpegPCMAudio(URL,**FFMPEG_OPTIONS), after=lambda e: music_play_next(ctx))
 
+    else:
+        if not vc.is_playing():
+            client.loop.create_task(vc.disconnect())
+
 
             
 # Event 디스코드 시작
@@ -368,7 +372,7 @@ async def g(ctx, *, keyword):
     driver.get("https://www.google.co.kr/search?q="+ keyword +"&source=lnms&tbm=isch&sa=X&ved=2ahUKEwjJ3uOx2JHwAhWMOpQKHQxdAI0Q_AUoAXoECAEQAw&biw=1920&bih=969")
     driver.maximize_window()
 
-    imgs = driver.find_elements_by_css_selector('img.rg_i.Q4LuWd')
+    imgs = driver.find_elements_by_css_selector('img')
     
     links = []
     n = -1
