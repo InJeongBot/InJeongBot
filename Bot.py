@@ -124,7 +124,7 @@ def load_chrome_driver():
 async def 도움말(ctx):
     embed = discord.Embed(title = "인정봇", description = "", color = 0x00ff00)
     embed.set_author(name = "ㅇㅈ#6079", icon_url = 'https://lh3.googleusercontent.com/-b3wHaZebfC8/YAEp78DCGJI/AAAAAAAAANw/Sk6gws7hEy81VLbZi32vt58dZmUKLZrCQCEwYBhgLKtQDAL1OcqwIQMufwzmCuUW16OknG_oX85sW4RcVXoFEg1Y8q-3JrshwX_Fn2UT8j6sp3whjH82Zxc1gh_IbXm_OihPlY4q8AIUUqBxxkBTexM5P-b2fdBs_gGD0B8o1IICIBIqKj18jGiaQ6x2OcHfZ98dgrywv_SjkVFOBctoMGx5Sucl6l5w1YB1iDmUT3spIg1sTrDko1xZDdRJmFvIdnao_EoMEKKxnHtb3OUI-OQx7jwx2O912DBBRimkvJmk3YEnsWqxGBP74TuIV_DVkhtqAiFi5lDJ3a7OfyCf-U3DuK01BR3rpSvoOaWCJVdye22AQuAJ-PYKAD7rKip7MdIl45Oej3mVH7N53SOt29e-D9ZhohEhUz7vWdUxHdK-AHEz8Gz2kgQTHrYiHX6jeQVejFrYzgNdBefxXFvdEhIkGH9FQT3jO8HaIjwaZhnlmfv2mkFLLubUxIeuh1jf0-qdJvGJSSrRZ0mVhhwChDXzwHbS6MGJ2TCcOBJ638A-72mAh5Y68nOTXBU3wJ9PcbAbP_JK6Z1svl2NEnyhTzCaKgZQp3ayQpAPevAuStMPsGr6Kz67ZTnJWd132m2JLGJ1mUXt0XULEUnv1WmON9Qqh2Gk9MKDziYQG/w139-h140-p/2021-01-14.jpg')
-    embed.add_field(name = "Command", value = "/join /leave /play (노래제목) /n (검색어) /g (검색어) \n/queuedel /queue /queueclear \n/지금노래 /pause /resume /stop", inline = True)
+    embed.add_field(name = "Command", value = "/join /leave /play (노래제목) /n (검색어) /g (검색어) \n/queuedel /queue /queueclear \n/musicinfo /pause /resume /stop", inline = True)
     await ctx.send(embed=embed)
 
 
@@ -273,9 +273,9 @@ async def 목록재생(ctx):
             await ctx.send("노래가 이미 재생되고 있어요!")
 
             
-# Command /지금노래
+# Command /musicinfo
 @bot.command()
-async def 지금노래(ctx):
+async def musicinfo(ctx):
     if not vc.is_playing():
         await ctx.send("노래를 재생하고 있지 않네요")
     else:
