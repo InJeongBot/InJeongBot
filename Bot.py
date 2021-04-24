@@ -17,7 +17,7 @@ import os
 
 import random
 
-bot = commands.Bot(command_prefix='/')
+bot = commands.Bot(command_prefix='=')
 client = discord.Client()
 
 # 음악 목록
@@ -35,6 +35,9 @@ def f_music_title(msg):
     YDL_OPTIONS = {'format': 'bestaudio', 'noplaylist':'True'}
     FFMPEG_OPTIONS = {'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5', 'options': '-vn'}
 
+    options = webdriver.ChromeOptions()
+    options.add_argument("headless")
+    
     driver = load_chrome_driver()
     driver.get("https://www.youtube.com/results?search_query="+msg)
     source = driver.page_source
@@ -50,6 +53,8 @@ def f_music_title(msg):
     with YoutubeDL(YDL_OPTIONS) as ydl:
             info = ydl.extract_info(url, download=False)
     URL = info['formats'][0]['url']
+
+    driver.quit()
     
     return music, URL
 
@@ -85,6 +90,7 @@ def music_play_next(ctx):
             del music_user[0]
             del music_title[0]
             del music_queue[0]
+            
             vc.play(discord.FFmpegPCMAudio(URL,**FFMPEG_OPTIONS), after=lambda e: music_play_next(ctx))
 
 
@@ -97,7 +103,7 @@ async def on_ready():
     print(bot.user.name)
     print('TOKEN =', TOKEN)
     print('Successly access')
-    
+
     if not discord.opus.is_loaded():
         discord.opus.load_opus('opus')
 
@@ -138,7 +144,7 @@ async def join(ctx):
 # Command /leave
 @bot.command()
 async def leave(ctx):
-    client.looop.create_task(vc.disconnect())
+    client.loop.create_task(vc.disconnect())
 
     
 # Command /play 노래제목
@@ -151,40 +157,46 @@ async def play(ctx, *, msg):
     except:
         try:
             await vc.move_to(ctx.message.author.voice.channel)
-            
-            if not vc.is_playing():
-                global entireText
-                YDL_OPTIONS = {'format': 'bestaudio', 'noplaylist':'True'}
-                FFMPEG_OPTIONS = {'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5', 'options': '-vn'}
-                    
-                driver = load_chrome_driver()
-                driver.get("https://www.youtube.com/results?search_query="+msg)
-                source = driver.page_source
-                bs = bs4.BeautifulSoup(source, 'lxml')
-                entire = bs.find_all('a', {'id': 'video-title'})
-                entireNum = entire[0]
-                entireText = entireNum.text.strip()
-                musicurl = entireNum.get('href')
-                url = 'https://www.youtube.com'+musicurl
-                video_number = musicurl[9:]
-                image_type = '0'
-                thumbnail = 'http://img.youtube.com/vi/'+ video_number +'/'+ image_type +'.jpg'
-
-                music_now.insert(0, entireText)
-                with YoutubeDL(YDL_OPTIONS) as ydl:
-                    info = ydl.extract_info(url, download=False)
-                URL = info['formats'][0]['url']
-                embed = discord.Embed(title = entireText, description = "", color = 0x00ff00)
-                embed.set_image(url = thumbnail)
-                await ctx.send(embed=embed)
-                vc.play(discord.FFmpegPCMAudio(URL, **FFMPEG_OPTIONS), after=lambda e: music_play_next(ctx))
-            else:
-                music_user.append(msg)
-                result, URLTEST = f_music_title(msg)
-                music_queue.append(URLTEST)
-            
         except:
             await ctx.send("채널에 접속해 주세요")
+            
+    if not vc.is_playing():
+
+        options = webdriver.ChromeOptions()
+        options.add_argument("headless")
+            
+        global entireText
+        YDL_OPTIONS = {'format': 'bestaudio', 'noplaylist':'True'}
+        FFMPEG_OPTIONS = {'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5', 'options': '-vn'}
+        
+        driver = load_chrome_driver()
+        driver.get("https://www.youtube.com/results?search_query="+msg)
+        source = driver.page_source
+        bs = bs4.BeautifulSoup(source, 'lxml')
+        entire = bs.find_all('a', {'id': 'video-title'})
+        entireNum = entire[0]
+        entireText = entireNum.text.strip()
+        musicurl = entireNum.get('href')
+        url = 'https://www.youtube.com'+musicurl
+        video_number = musicurl[9:]
+        image_type = '0'
+        thumbnail = 'http://img.youtube.com/vi/'+ video_number +'/'+ image_type +'.jpg'
+
+        driver.quit()
+
+        music_now.insert(0, entireText)
+        with YoutubeDL(YDL_OPTIONS) as ydl:
+            info = ydl.extract_info(url, download=False)
+        URL = info['formats'][0]['url']
+        embed = discord.Embed(title = entireText, description = "", color = 0x00ff00)
+        embed.set_image(url = thumbnail)
+        await ctx.send(embed=embed)
+        vc.play(discord.FFmpegPCMAudio(URL, **FFMPEG_OPTIONS), after=lambda e: music_play_next(ctx))
+                
+    else:
+        music_user.append(msg)
+        result, URLTEST = f_music_title(msg)
+        music_queue.append(URLTEST)
         
     print('musicurl =', musicurl)
 
@@ -296,7 +308,7 @@ async def stop(ctx):
         global number
         number = 0
         
-        await ctx.message.voice.channel.disconnect()
+        client.loop.create_task(vc.disconnect())
         
     else:
         await ctx.send("노래를 재생하고 있지 않네요")
@@ -370,6 +382,7 @@ async def g(ctx, *, keyword):
     else :
         embed = discord.Embed(title= '검색결과 없음', color = 0x00ff00)
     await ctx.send(embed=embed)
+
 
     
     
