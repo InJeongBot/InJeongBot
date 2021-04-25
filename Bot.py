@@ -178,7 +178,6 @@ async def play(ctx, *, msg):
             await vc.move_to(ctx.message.author.voice.channel)
         except:
             await ctx.send("채널에 접속해 주세요")
-            break
             
     if not vc.is_playing():
 
