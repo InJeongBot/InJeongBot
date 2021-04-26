@@ -376,7 +376,7 @@ async def botchannel(ctx):
     await msg.add_reaction('⏸')
     await msg.add_reaction('⏹')
     await msg.add_reaction('⏭')
-    
+
     while True:
         if vc.is_playing():
             if len(music_title) == 0:
