@@ -27,6 +27,8 @@ music_queue = []
 music_now = []
 music_thumbnail = []
 
+
+
 # Event 디스코드 시작
 @bot.event
 async def on_ready():
@@ -78,9 +80,9 @@ def f_music_title(msg):
     url = 'https://www.youtube.com'+test1
 
     #썸네일
-    video_number = test1[9:]
-    test1.thumbnail = 'http://img.youtube.com/vi/'+ video_number +'/'+ image_type +'.jpg'
-    music_thumbnail.append(test1.thumbnail)
+    test1_video_number = test1[9:]
+    test1_thumbnail = 'http://img.youtube.com/vi/'+ test1_video_number +'/0.jpg'
+    music_thumbnail.append(test1_thumbnail)
     
     with YoutubeDL(YDL_OPTIONS) as ydl:
             info = ydl.extract_info(url, download=False)
@@ -177,7 +179,6 @@ async def leave(ctx):
 async def play(ctx, *, msg):
     global InJeongbot_music_ch_id
     global InJeongbot_music_ch
-    
     try:
         global vc
         vc = await ctx.message.author.voice.channel.connect()
@@ -206,8 +207,6 @@ async def play(ctx, *, msg):
         musicurl = entireNum.get('href')
         url = 'https://www.youtube.com'+musicurl
 
-        #썸네일
-        global image_type
         video_number = musicurl[9:]
         image_type = '0'
         thumbnail = 'http://img.youtube.com/vi/'+ video_number +'/'+ image_type +'.jpg'
@@ -351,7 +350,6 @@ async def skip(ctx):
             await ctx.send("스킵할 노래가 없네요")
     else:
         await ctx.send("노래를 재생하고 있지 않네요")
-
 
 # Command /stop
 @bot.command()
@@ -523,7 +521,6 @@ async def g(ctx, *, keyword):
     else :
         embed = discord.Embed(title= '검색결과 없음', color = 0x00ff00)
     await ctx.send(embed=embed)
-
     
 TOKEN = os.environ['BOT_TOKEN']
 bot.run(TOKEN)
