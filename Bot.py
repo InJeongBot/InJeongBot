@@ -18,7 +18,6 @@ import os
 import random
 
 
-
 bot = commands.Bot(command_prefix = '=')
 client = discord.Client()
 
@@ -38,10 +37,10 @@ async def on_ready():
     print(bot.user.name)
     print('TOKEN =', TOKEN)
     print('Successly access')
-
+'''
     if not discord.opus.is_loaded():
         discord.opus.load_opus('opus')
-
+'''
 
 # 봇 전용 채널
 @bot.event
@@ -50,8 +49,9 @@ async def on_message(msg):
         return None
     topic = msg.channel.topic
     if topic != None and '#인정_Music' in topic:
+        self = msg
+        await play(bot, msg=msg)
         await msg.delete()
-        await play(bot, msg)
     else:
         await bot.process_commands(msg)
         
@@ -177,7 +177,14 @@ async def leave(ctx):
 # Command /play 노래제목
 @bot.command()
 async def play(ctx, *, msg):
-    await join(bot)
+    try:
+        global vc
+        vc = await ctx.message.author.voice.channel.connect()
+    except:
+        try:
+            await vc.move_to(ctx.message.author.voice.channel)
+        except:
+            await ctx.send("채널에 접속해 주세요")
             
     if not vc.is_playing():
 
