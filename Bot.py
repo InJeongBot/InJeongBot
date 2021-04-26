@@ -17,7 +17,7 @@ import os
 
 import random
 
-bot = commands.Bot(command_prefix='=')
+bot = commands.Bot(command_prefix = '=')
 client = discord.Client()
 
 # 음악 목록
@@ -35,10 +35,10 @@ async def on_ready():
     print(bot.user.name)
     print('TOKEN =', TOKEN)
     print('Successly access')
-
+'''
     if not discord.opus.is_loaded():
         discord.opus.load_opus('opus')
-        
+'''
 '''
 # 봇 전용 채널
 
@@ -356,7 +356,10 @@ async def stop(ctx):
 @bot.command(pass_context = True)
 async def botchannel(ctx):
     global vc
-    
+    global music_now
+    global Text
+    global music_title
+
     await ctx.guild.create_text_channel(name = "인정봇", topic = '#인정봇')
 
     all_channels = ctx.guild.text_channels
@@ -368,60 +371,74 @@ async def botchannel(ctx):
     embed = discord.Embed(title='인정봇_Music', description='')
     embed.set_image(url = 'https://i.ytimg.com/vi/1SLr62VBBjw/hq720.jpg?sqp=-oaymwEcCOgCEMoBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCbXp098HNZl_SbZ5Io5GuHd6M4CA')
                                           
-    msg = await InJeongbot_music_ch.send('Queue list: \n', embed=embed)
+    msg = await InJeongbot_music_ch.send('노래 목록 \n', embed=embed)
     await msg.add_reaction('▶')
     await msg.add_reaction('⏸')
     await msg.add_reaction('⏹')
     await msg.add_reaction('⏭')
     
     while True:
-        try:
-            def check(reaction, user):
-                return str(reaction) in ['▶', '⏸', '⏹', '⏭'] and user == ctx.author and reaction.message.id == msg.id
-            
-            reaction, user = await bot.wait_for('reaction_add', check=check)
-
-            if  (str(reaction) == '▶' ):
-                try:
-                    vc.resume()
-                except:
-                    pass
-
-            elif (str(reaction) == '⏸'):
-                try:
-                    vc.pause()
-                except:
-                    pass
-                
-            elif (str(reaction) == '⏹'):
-                
-                n = 3
-    
-            elif (str(reaction) == '⏭'):
-                if vc.is_playing():
-                    if len(music_user) > 1:
-                        vc.stop()
-                        global number
-                        number = 0
-                    else:
-                        pass
-                else:
-                    pass
-            
-            else:
-                pass
-            
+        if vc.is_playing():
             if len(music_title) == 0:
                 pass
             else:
-                n = 5
-
-                embed_music = discord.Embed('Queue list: \n' + Text.strip(), title = '인정봇 Music', description = music_now[0], color = 0x00ff00)
-                
-            embed_music.set_image(url = 'https://i.ytimg.com/vi/1SLr62VBBjw/hq720.jpg?sqp=-oaymwEcCOgCEMoBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCbXp098HNZl_SbZ5Io5GuHd6M4CA')
+                embed_music = discord.Embed(title='인정봇 Music', description=music_now[0], color=0x00ff00)
+            global thumbnail
+            embed_music.set_image(url=thumbnail)
             await msg.edit(embed=embed_music)
-            await ctx.send("안녕")
-        except:
+        else:
+            embed_music_f = discord.Embed(title='인정봇 Music', description='', color=0x00ff00)
+            embed_music_f.set_image(url='https://i.ytimg.com/vi/1SLr62VBBjw/hq720.jpg?sqp=-oaymwEcCOgCEMoBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCbXp098HNZl_SbZ5Io5GuHd6M4CA')
+            await msg.edit(embed=embed_music_f)
+
+    while True:
+        if vc.is_playing():
+            try:
+                def check(reaction, user):
+                    return str(reaction) in ['▶', '⏸', '⏹', '⏭'] and user == ctx.author and reaction.message.id == msg.id
+
+                reaction, user = await bot.wait_for('reaction_add', check=check)
+
+                if (str(reaction) == '▶' ):
+                    try:
+                        vc.resume()
+                    except:
+                        pass
+
+                elif (str(reaction) == '⏸'):
+                    try:
+                        vc.pause()
+                    except:
+                        pass
+
+                elif (str(reaction) == '⏹'):
+
+                    if vc.is_playing():
+                        vc.stop()
+                        global number
+                        number = 0
+
+                        client.loop.create_task(vc.disconnect())
+
+                    else:
+                        pass
+
+                elif (str(reaction) == '⏭'):
+                    if vc.is_playing():
+                        if len(music_user) > 1:
+                            vc.stop()
+                            global number
+                            number = 0
+                        else:
+                            pass
+                    else:
+                        pass
+
+                else:
+                    pass
+            except:
+                pass
+        else:
             pass
 
 
