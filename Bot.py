@@ -38,10 +38,10 @@ async def on_ready():
     print(bot.user.name)
     print('TOKEN =', TOKEN)
     print('Successly access')
-
+'''
     if not discord.opus.is_loaded():
         discord.opus.load_opus('opus')
-
+'''
 '''
 # 봇 전용 채널
 
@@ -382,7 +382,10 @@ async def musicchannel(ctx):
     global Text
     global music_title
     global music_thumbnail
-
+    global all_channels
+    global InJeongbot_music_ch_id
+    global InJeongbot_music_ch
+    
     await ctx.guild.create_text_channel(name = "인정봇", topic = '#인정봇')
 
     all_channels = ctx.guild.text_channels
@@ -444,6 +447,9 @@ async def musicchannel(ctx):
 @bot.command(pass_context = True)
 async def musicvideo(ctx):
     global music_msg
+    global all_channels
+    global InJeongbot_music_ch_id
+    global InJeongbot_music_ch
     while True:
         try:
             try:
@@ -547,7 +553,6 @@ async def g(ctx, *, keyword):
     else :
         embed = discord.Embed(title= '검색결과 없음', color = 0x00ff00)
     await ctx.send(embed=embed)
-
 
 
     
