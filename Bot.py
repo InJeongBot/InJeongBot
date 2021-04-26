@@ -365,7 +365,7 @@ async def stop(ctx):
                     del music_now[ex]
                 except:
                     break
-        except
+        except:
             pass
         
         client.loop.create_task(vc.disconnect())
@@ -449,7 +449,7 @@ async def musicvideo(ctx):
             try:
                 Text = ""
                 for i in range(len(music_title)):
-                Text = Text + "\n" + str(i + 1) + ". " + str(music_title[i])
+                    Text = Text + "\n" + str(i + 1) + ". " + str(music_title[i])
                 await music_msg.edit(content = '노래 목록 \n' + Text.strip())
             except:
                 pass
