@@ -18,28 +18,6 @@ import os
 import random
 
 
-import discord
-from discord.ext import commands
-from youtube_dl import YoutubeDL
-import time
-import asyncio
-import bs4
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
-from discord.utils import get
-from discord import FFmpegPCMAudio
-
-from urllib.request import urlopen
-from bs4 import BeautifulSoup as bs
-from urllib.parse import quote_plus
-
-import os
-
-import random
-
-
-TOKEN = 'ODM0NjkzODUwNTM4MTgwNjE4.YIEnOQ.vErt8XXxjCDpk1jiesvGhadhzzc'
-
 bot = commands.Bot(command_prefix = '=')
 client = discord.Client()
 
