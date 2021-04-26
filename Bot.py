@@ -214,7 +214,7 @@ async def play(ctx, *, msg):
         driver.quit()
 
         music_now.insert(0, entireText)
-        music_thumbnail.insert(0, tumbnail)
+        music_thumbnail.insert(0, thumbnail)
         with YoutubeDL(YDL_OPTIONS) as ydl:
             info = ydl.extract_info(url, download=False)
         URL = info['formats'][0]['url']
