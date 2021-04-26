@@ -329,6 +329,7 @@ async def skip(ctx):
             global number
             number = 0
 
+            global music_now
             await ctx.send(embed = discord.Embed(title = music_now[0], description = "", color = 0x00ff00))
         else:
             await ctx.send("스킵할 노래가 없네요")
@@ -359,6 +360,7 @@ async def botchannel(ctx):
     global music_now
     global Text
     global music_title
+    global thumbnail
 
     await ctx.guild.create_text_channel(name = "인정봇", topic = '#인정봇')
 
@@ -376,67 +378,57 @@ async def botchannel(ctx):
     await msg.add_reaction('⏸')
     await msg.add_reaction('⏹')
     await msg.add_reaction('⏭')
-    '''
+    
     while True:
-        if vc.is_playing():
+        try:
+            embed_music_f = discord.Embed(title='인정봇 Music', description='', color=0x00ff00)
+            embed_music_f.set_image(url='https://i.ytimg.com/vi/1SLr62VBBjw/hq720.jpg?sqp=-oaymwEcCOgCEMoBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCbXp098HNZl_SbZ5Io5GuHd6M4CA')
+            await msg.edit(embed=embed_music_f)
+        except:
+            pass
+
+        try:
             if len(music_title) == 0:
                 pass
             else:
                 embed_music = discord.Embed(title='인정봇 Music', description=music_now[0], color=0x00ff00)
-            global thumbnail
-            embed_music.set_image(url=thumbnail)
-            await msg.edit(embed=embed_music)
-        else:
-            embed_music_f = discord.Embed(title='인정봇 Music', description='', color=0x00ff00)
-            embed_music_f.set_image(url='https://i.ytimg.com/vi/1SLr62VBBjw/hq720.jpg?sqp=-oaymwEcCOgCEMoBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCbXp098HNZl_SbZ5Io5GuHd6M4CA')
-            await msg.edit(embed=embed_music_f)
-    '''
-    while True:
-        if vc.is_playing():
-            try:
-                def check(reaction, user):
-                    return str(reaction) in ['▶', '⏸', '⏹', '⏭'] and user == ctx.author and reaction.message.id == msg.id
+                embed_music.set_image(url=thumbnail)
+                await msg.edit(embed=embed_music)
+        except:
+            pass
 
-                reaction, user = await bot.wait_for('reaction_add', check=check)
+        try:
+            def check(reaction, user):
+                return str(reaction) in ['▶', '⏸', '⏹', '⏭'] and user == ctx.author and reaction.message.id == msg.id
 
-                if (str(reaction) == '▶' ):
-                    try:
-                        vc.resume()
-                    except:
-                        pass
+            reaction, user = await bot.wait_for('reaction_add', check=check)
 
-                elif (str(reaction) == '⏸'):
-                    try:
-                        vc.pause()
-                    except:
-                        pass
-
-                elif (str(reaction) == '⏹'):
-
-                    if vc.is_playing():
-                        vc.stop()
-                        global number
-                        number = 0
-
-                        client.loop.create_task(vc.disconnect())
-
-                    else:
-                        pass
-
-                elif (str(reaction) == '⏭'):
-                    if vc.is_playing():
-                        if len(music_user) > 1:
-                            vc.stop()
-                        else:
-                            pass
-                    else:
-                        pass
-
-                else:
+            if (str(reaction) == '▶' ):
+                try:
+                    vc.resume()
+                except:
                     pass
-            except:
-                pass
-        else:
+
+            elif (str(reaction) == '⏸'):
+                try:
+                    vc.pause()
+                except:
+                    pass
+
+            elif (str(reaction) == '⏹'):
+
+                if vc.is_playing():
+                    vc.stop()
+                    global number
+                    number = 0
+
+                    client.loop.create_task(vc.disconnect())
+
+            elif (str(reaction) == '⏭'):
+                if vc.is_playing():
+                    if len(music_user) > 1:
+                        vc.stop()
+        except:
             pass
 
 
@@ -522,7 +514,7 @@ async def g(ctx, *, keyword):
     else :
         embed = discord.Embed(title= '검색결과 없음', color = 0x00ff00)
     await ctx.send(embed=embed)
-    
+
     
 TOKEN = os.environ['BOT_TOKEN']
 bot.run(TOKEN)
