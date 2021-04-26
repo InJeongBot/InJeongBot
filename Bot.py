@@ -376,7 +376,7 @@ async def botchannel(ctx):
     await msg.add_reaction('⏸')
     await msg.add_reaction('⏹')
     await msg.add_reaction('⏭')
-
+    '''
     while True:
         if vc.is_playing():
             if len(music_title) == 0:
@@ -390,7 +390,7 @@ async def botchannel(ctx):
             embed_music_f = discord.Embed(title='인정봇 Music', description='', color=0x00ff00)
             embed_music_f.set_image(url='https://i.ytimg.com/vi/1SLr62VBBjw/hq720.jpg?sqp=-oaymwEcCOgCEMoBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCbXp098HNZl_SbZ5Io5GuHd6M4CA')
             await msg.edit(embed=embed_music_f)
-
+    '''
     while True:
         if vc.is_playing():
             try:
