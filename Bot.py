@@ -427,7 +427,7 @@ async def botchannel(ctx):
                     if vc.is_playing():
                         if len(music_user) > 1:
                             vc.stop()
-                            global number
+
                             number = 0
                         else:
                             pass
