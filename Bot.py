@@ -378,6 +378,9 @@ async def stop(ctx):
 async def musicchannel(ctx):
     global vc
     global music_msg
+    global Text
+    global music_now
+    global music_thumbnail
     
     await ctx.guild.create_text_channel(name = "인정봇", topic = '#인정봇')
 
