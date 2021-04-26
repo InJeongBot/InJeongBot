@@ -37,10 +37,10 @@ async def on_ready():
     print(bot.user.name)
     print('TOKEN =', TOKEN)
     print('Successly access')
-
+'''
     if not discord.opus.is_loaded():
         discord.opus.load_opus('opus')
-
+'''
 '''
 # 봇 전용 채널
 
@@ -337,7 +337,7 @@ async def resume(ctx):
 @bot.command()
 async def skip(ctx):
     if vc.is_playing():
-        if len(music_user) > 1:
+        if len(music_user) >= 1:
             vc.stop()
 
             embed = discord.Embed(title = music_now[1], description = "", color = 0x00ff00)
@@ -378,9 +378,6 @@ async def stop(ctx):
 async def musicchannel(ctx):
     global vc
     global music_msg
-    global Text
-    global music_now
-    global music_thumbnail
     
     await ctx.guild.create_text_channel(name = "인정봇", topic = '#인정봇')
 
@@ -397,14 +394,6 @@ async def musicchannel(ctx):
 
     while True:
         try:
-            try:
-                Text = ""
-                for i in range(len(music_title)):
-                    Text = Text + "\n" + str(i + 1) + ". " + str(music_title[i])
-                await music_msg.edit(content = '노래 목록 \n' + Text.strip())
-            except:
-                pass
-            
             embed_music = discord.Embed(title='인정 Music \n' + music_now[0], description='', color=0x00ff00)
             embed_music.set_image(url=music_thumbnail[0])
             await music_msg.edit(embed=embed_music)
@@ -455,7 +444,7 @@ async def musicvideo(ctx):
 
             if (str(reaction) == '⏭'):
                 if vc.is_playing():
-                    if len(music_user) > 1:
+                    if len(music_user) >= 1:
                         vc.stop()
                         
         except:
