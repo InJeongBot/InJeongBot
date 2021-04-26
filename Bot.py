@@ -18,6 +18,7 @@ import os
 import random
 
 
+
 bot = commands.Bot(command_prefix = '=')
 client = discord.Client()
 
@@ -41,19 +42,19 @@ async def on_ready():
     if not discord.opus.is_loaded():
         discord.opus.load_opus('opus')
 
-'''
-# 봇 전용 채널
 
+# 봇 전용 채널
 @bot.event
 async def on_message(msg):
     if msg.author.bot :
         return None
     topic = msg.channel.topic
-    if topic != None and '#인정봇' in topic:
-        await msg.send(embed = discord.Embed(title='제목', description=''))
+    if topic != None and '#인정_Music' in topic:
+        await msg.delete()
+        await play(bot, msg)
     else:
-        return None
-'''
+        await bot.process_commands(msg)
+        
 
 # f_music_title 함수
 def f_music_title(msg):
@@ -109,7 +110,6 @@ def music_play(ctx):
     
     if not vc.is_playing():
         vc.play(FFmpegPCMAudio(URL, **FFMPEG_OPTIONS), after=lambda e: music_play_next(ctx)) 
-
 
 # music_play_next 함수
 def music_play_next(ctx):
@@ -177,16 +177,7 @@ async def leave(ctx):
 # Command /play 노래제목
 @bot.command()
 async def play(ctx, *, msg):
-    global InJeongbot_music_ch_id
-    global InJeongbot_music_ch
-    try:
-        global vc
-        vc = await ctx.message.author.voice.channel.connect()
-    except:
-        try:
-            await vc.move_to(ctx.message.author.voice.channel)
-        except:
-            await ctx.send("채널에 접속해 주세요")
+    await join(bot)
             
     if not vc.is_playing():
 
@@ -379,7 +370,7 @@ async def musicchannel(ctx):
     global vc
     global music_msg
 
-    await ctx.guild.create_text_channel(name = "인정봇", topic = '#인정봇')
+    await ctx.guild.create_text_channel(name = "인정 Music", topic = '#인정_Music')
 
     all_channels = ctx.guild.text_channels
 
@@ -392,12 +383,12 @@ async def musicchannel(ctx):
                                    
     music_msg = await InJeongbot_music_ch.send('노래 목록 \n', embed=embed)
 
+    await musicvideo(bot)
+    
     while True:
         try:
             try:
-                Text = ''
-                for i in range(len(music_title)):
-                    Text = Text + "\n" + str(i + 1) + ". " + str(music_title[i])
+                await queue(ctx)
                 await music_msg.edit(content=Text.Strip())
             except:
                 pass
@@ -430,40 +421,27 @@ async def musicvideo(ctx):
 
             if (str(reaction) == '▶' ):
                 try:
-                    vc.resume()
+                    await resume(bot)
                 except:
                     pass
 
             if (str(reaction) == '⏸'):
                 try:
-                    vc.pause()
+                    await pause(bot)
                 except:
                     pass
 
             if (str(reaction) == '⏹'):
-                if vc.is_playing():
-                    vc.stop()
-                    try:
-                        ex = len(music_now) - len(music_user)
-                        del music_user[:]
-                        del music_title[:]
-                        del music_queue[:]
-                        del music_thumbnail[:]
-                        while True:
-                            try:
-                                del music_now[ex]
-                            except:
-                                break
-                    except:
-                        pass
-                    
-                    client.loop.create_task(vc.disconnect())
+                try:
+                    await stop(bot)
+                except:
+                    pass
 
             if (str(reaction) == '⏭'):
-                if vc.is_playing():
-                    if len(music_user) >= 1:
-                        vc.stop()
-                        
+                try:
+                    await skip(bot)
+                except:
+                    pass
         except:
              pass
 
