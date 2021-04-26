@@ -415,6 +415,8 @@ async def botchannel(ctx):
 
                     if vc.is_playing():
                         vc.stop()
+                        global number
+                        number = 0
 
                         client.loop.create_task(vc.disconnect())
 
