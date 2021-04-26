@@ -17,6 +17,7 @@ import os
 
 import random
 
+
 bot = commands.Bot(command_prefix = '=')
 client = discord.Client()
 
@@ -150,7 +151,7 @@ def load_chrome_driver():
 async def 도움말(ctx):
     embed = discord.Embed(title = "인정봇", description = "", color = 0x00ff00)
     embed.set_author(name = "ㅇㅈ#6079", icon_url = 'http://www.palnews.co.kr/news/photo/201801/92969_25283_5321.jpg')
-    embed.add_field(name = "Command", value = "/join /leave /play (노래제목) /n (검색어) /g (검색어) \n/queuedel (숫자) /queue /queueclear \n/musicinfo /pause /resume /skip /stop", inline = True)
+    embed.add_field(name = "Command", value = "/join /leave /play (노래제목) /n (검색어) /g (검색어) \n/queuedel (숫자) /queue /queueclear \n/musicinfo /pause /resume /skip /stop \n/musicchannel /musicvideo", inline = True)
     await ctx.send(embed=embed)
 
 
@@ -339,8 +340,6 @@ async def skip(ctx):
     if vc.is_playing():
         if len(music_user) > 1:
             vc.stop()
-            global number
-            number = 0
 
             embed = discord.Embed(title = music_now[1], description = "", color = 0x00ff00)
             embed.set_image(url=music_thumbnail[1])
@@ -355,8 +354,19 @@ async def skip(ctx):
 async def stop(ctx):
     if vc.is_playing():
         vc.stop()
-        global number
-        number = 0
+        try:
+            ex = len(music_now) - len(music_user)
+            del music_user[:]
+            del music_title[:]
+            del music_queue[:]
+            del music_thumbnail[:]
+            while True:
+                try:
+                    del music_now[ex]
+                except:
+                    break
+        except
+            pass
         
         client.loop.create_task(vc.disconnect())
         
@@ -366,7 +376,7 @@ async def stop(ctx):
 
 # 봇 전용 채널 만들기
 @bot.command(pass_context = True)
-async def botchannel(ctx):
+async def musicchannel(ctx):
     global vc
     global music_now
     global Text
@@ -384,25 +394,16 @@ async def botchannel(ctx):
     embed = discord.Embed(title='인정 Music', description='')
     embed.set_image(url = 'https://i.ytimg.com/vi/1SLr62VBBjw/hq720.jpg?sqp=-oaymwEcCOgCEMoBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCbXp098HNZl_SbZ5Io5GuHd6M4CA')
                                    
-    msg = await InJeongbot_music_ch.send('노래 목록 \n', embed=embed)
-    await msg.add_reaction('▶')
-    await msg.add_reaction('⏸')
-    await msg.add_reaction('⏹')
-    await msg.add_reaction('⏭')
+    music_msg = await InJeongbot_music_ch.send('노래 목록 \n', embed=embed)
+    await music_msg.add_reaction('▶')
+    await music_msg.add_reaction('⏸')
+    await music_msg.add_reaction('⏹')
+    await music_msg.add_reaction('⏭')
     
     while True:
         try:
-            embed_music = discord.Embed(title='인정 Music \n' + music_now[0], description='', color=0x00ff00)
-            embed_music.set_image(url=music_thumbnail[0])
-            await msg.edit(embed=embed_music)
-        except:
-            if not vc.is_playing():
-                embed_music_f = discord.Embed(title='인정 Music', description='', color=0x00ff00)
-                embed_music_f.set_image(url='https://i.ytimg.com/vi/1SLr62VBBjw/hq720.jpg?sqp=-oaymwEcCOgCEMoBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCbXp098HNZl_SbZ5Io5GuHd6M4CA')
-                await msg.edit(embed=embed_music_f)
-        try:
             def check(reaction, user):
-                return str(reaction) in ['▶', '⏸', '⏹', '⏭'] and user == ctx.author and reaction.message.id == msg.id
+                return str(reaction) in ['▶', '⏸', '⏹', '⏭'] and user == ctx.author and reaction.message.id == music_msg.id
 
             reaction, user = await bot.wait_for('reaction_add', check=check)
 
@@ -412,35 +413,57 @@ async def botchannel(ctx):
                 except:
                     pass
 
-            elif (str(reaction) == '⏸'):
+            if (str(reaction) == '⏸'):
                 try:
                     vc.pause()
                 except:
                     pass
 
-            elif (str(reaction) == '⏹'):
+            if (str(reaction) == '⏹'):
                 if vc.is_playing():
                     vc.stop()
-                    global number
-                    number = 0
 
                     embed_music_f = discord.Embed(title='인정 Music', description='', color=0x00ff00)
                     embed_music_f.set_image(url='https://i.ytimg.com/vi/1SLr62VBBjw/hq720.jpg?sqp=-oaymwEcCOgCEMoBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCbXp098HNZl_SbZ5Io5GuHd6M4CA')
-                    await msg.edit(embed=embed_music_f)
-            
+                    await music_msg.edit(embed=embed_music_f)
+
                     client.loop.create_task(vc.disconnect())
 
-            elif (str(reaction) == '⏭'):
+            if (str(reaction) == '⏭'):
                 if vc.is_playing():
                     if len(music_user) > 1:
                         vc.stop()
 
                         embed_s = discord.Embed(title = music_now[1], description = "", color = 0x00ff00)
                         embed_s.set_image(url=music_thumbnail[1])
-                        await msg.edit(embed=embed_s)
+                        await music_msg.edit(embed=embed_s)
         except:
-            pass
+             pass
 
+# 봇 전용 채널 뮤직비디오 만들기
+@bot.command(pass_context = True)
+async def musicvideo(ctx):
+    global music_msg
+    while True:
+        try:
+            try:
+                Text = ""
+                for i in range(len(music_title)):
+                Text = Text + "\n" + str(i + 1) + ". " + str(music_title[i])
+                await music_msg.edit(content = '노래 목록 \n' + Text.strip())
+            except:
+                pass
+            
+            embed_music = discord.Embed(title='인정 Music \n' + music_now[0], description='', color=0x00ff00)
+            embed_music.set_image(url=music_thumbnail[0])
+            await music_msg.edit(embed=embed_music)
+        except:
+            if not vc.is_playing():
+                embed_music_f = discord.Embed(title='인정 Music', description='', color=0x00ff00)
+                embed_music_f.set_image(url='https://i.ytimg.com/vi/1SLr62VBBjw/hq720.jpg?sqp=-oaymwEcCOgCEMoBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCbXp098HNZl_SbZ5Io5GuHd6M4CA')
+                await music_msg.edit(embed=embed_music_f)
+            else:
+                pass
 
 # Command /n (내용)
 @bot.command()
@@ -524,6 +547,8 @@ async def g(ctx, *, keyword):
     else :
         embed = discord.Embed(title= '검색결과 없음', color = 0x00ff00)
     await ctx.send(embed=embed)
+
+
 
     
 TOKEN = os.environ['BOT_TOKEN']
