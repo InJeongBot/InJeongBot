@@ -18,6 +18,28 @@ import os
 import random
 
 
+import discord
+from discord.ext import commands
+from youtube_dl import YoutubeDL
+import time
+import asyncio
+import bs4
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+from discord.utils import get
+from discord import FFmpegPCMAudio
+
+from urllib.request import urlopen
+from bs4 import BeautifulSoup as bs
+from urllib.parse import quote_plus
+
+import os
+
+import random
+
+
+TOKEN = 'ODM0NjkzODUwNTM4MTgwNjE4.YIEnOQ.vErt8XXxjCDpk1jiesvGhadhzzc'
+
 bot = commands.Bot(command_prefix = '=')
 client = discord.Client()
 
@@ -378,7 +400,7 @@ async def stop(ctx):
 async def musicchannel(ctx):
     global vc
     global music_msg
-    
+
     await ctx.guild.create_text_channel(name = "인정봇", topic = '#인정봇')
 
     all_channels = ctx.guild.text_channels
@@ -394,12 +416,20 @@ async def musicchannel(ctx):
 
     while True:
         try:
-            embed_music = discord.Embed(title='인정 Music \n' + music_now[0], description='', color=0x00ff00)
+            try:
+                Text = ''
+                for i in range(len(music_title)):
+                    Text = Text + "\n" + str(i + 1) + ". " + str(music_title[i])
+                await music_msg.edit(content=Text.Strip())
+            except:
+                pass
+            
+            embed_music = discord.Embed(title='인정 Music \n' + music_now[0], description='')
             embed_music.set_image(url=music_thumbnail[0])
             await music_msg.edit(embed=embed_music)
         except:
             if not vc.is_playing():
-                embed_music_f = discord.Embed(title='인정 Music', description='', color=0x00ff00)
+                embed_music_f = discord.Embed(title='인정 Music', description='')
                 embed_music_f.set_image(url='https://i.ytimg.com/vi/1SLr62VBBjw/hq720.jpg?sqp=-oaymwEcCOgCEMoBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCbXp098HNZl_SbZ5Io5GuHd6M4CA')
                 await music_msg.edit(embed=embed_music_f)
             else:
@@ -435,11 +465,20 @@ async def musicvideo(ctx):
             if (str(reaction) == '⏹'):
                 if vc.is_playing():
                     vc.stop()
-
-                    embed_music_f = discord.Embed(title='인정 Music', description='', color=0x00ff00)
-                    embed_music_f.set_image(url='https://i.ytimg.com/vi/1SLr62VBBjw/hq720.jpg?sqp=-oaymwEcCOgCEMoBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCbXp098HNZl_SbZ5Io5GuHd6M4CA')
-                    await music_msg.edit(embed=embed_music_f)
-
+                    try:
+                        ex = len(music_now) - len(music_user)
+                        del music_user[:]
+                        del music_title[:]
+                        del music_queue[:]
+                        del music_thumbnail[:]
+                        while True:
+                            try:
+                                del music_now[ex]
+                            except:
+                                break
+                    except:
+                        pass
+                    
                     client.loop.create_task(vc.disconnect())
 
             if (str(reaction) == '⏭'):
@@ -451,6 +490,7 @@ async def musicvideo(ctx):
              pass
 
 
+    
 # Command /n (내용)
 @bot.command()
 async def n(ctx, *, keyword):
