@@ -437,7 +437,7 @@ async def botchannel(ctx):
 
                         embed_s = discord.Embed(title = music_now[1], description = "", color = 0x00ff00)
                         embed_s.set_image(url=music_thumbnail[1])
-                        await ctx.send(embed=embed_s)
+                        await msg.edit(embed=embed_s)
         except:
             pass
 
