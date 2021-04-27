@@ -37,10 +37,10 @@ async def on_ready():
     print(bot.user.name)
     print('TOKEN =', TOKEN)
     print('Successly access')
-
+'''
     if not discord.opus.is_loaded():
         discord.opus.load_opus('opus')
-
+'''
 
 # 봇 전용 채널
 @bot.event
@@ -49,7 +49,6 @@ async def on_message(msg):
         return None
     topic = msg.channel.topic
     if topic != None and '#인정_Music' in topic:
-        self = msg
         await play(bot, msg=msg)
         await msg.delete()
     else:
@@ -394,12 +393,6 @@ async def musicchannel(ctx):
     
     while True:
         try:
-            try:
-                await queue(ctx)
-                await music_msg.edit(content=Text.Strip())
-            except:
-                pass
-            
             embed_music = discord.Embed(title='인정 Music \n' + music_now[0], description='')
             embed_music.set_image(url=music_thumbnail[0])
             await music_msg.edit(embed=embed_music)
@@ -428,27 +421,44 @@ async def musicvideo(ctx):
 
             if (str(reaction) == '▶' ):
                 try:
-                    await resume(bot)
+                    vc.resume()
                 except:
                     pass
 
             if (str(reaction) == '⏸'):
                 try:
-                    await pause(bot)
+                    vc.pause()
                 except:
                     pass
 
             if (str(reaction) == '⏹'):
-                try:
-                    await stop(bot)
-                except:
-                    pass
+                if vc.is_playing():
+                    vc.stop()
+                    try:
+                        ex = len(music_now) - len(music_user)
+                        del music_user[:]
+                        del music_title[:]
+                        del music_queue[:]
+                        del music_thumbnail[:]
+                        while True:
+                            try:
+                                del music_now[ex]
+                            except:
+                                break
+                    except:
+                        pass
+        
+        client.loop.create_task(vc.disconnect())
+        
+    else:
+        await ctx.send("노래를 재생하고 있지 않네요")
+
+
 
             if (str(reaction) == '⏭'):
-                try:
-                    await skip(bot)
-                except:
-                    pass
+                if vc.is_playing():
+                    if len(music_user) >= 1:
+                        vc.stop()
         except:
              pass
 
