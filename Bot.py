@@ -37,10 +37,10 @@ async def on_ready():
     print(bot.user.name)
     print('TOKEN =', TOKEN)
     print('Successly access')
-
+'''
     if not discord.opus.is_loaded():
         discord.opus.load_opus('opus')
-
+'''
 
 
 # 봇 전용 채널
@@ -131,6 +131,20 @@ def music_play_next(ctx):
 
     else:
         if not vc.is_playing():
+            try:
+                ex = len(music_now) - len(music_user)
+                del music_user[:]
+                del music_title[:]
+                del music_queue[:]
+                del music_thumbnail[:]
+                while True:
+                    try:
+                        del music_now[ex]
+                    except:
+                        break
+            except:
+                pass
+        
             client.loop.create_task(vc.disconnect())
 
 
@@ -150,7 +164,7 @@ def load_chrome_driver():
 async def 도움말(ctx):
     embed = discord.Embed(title = "인정봇", description = "")
     embed.set_author(name = "ㅇㅈ#6079", icon_url = 'http://www.palnews.co.kr/news/photo/201801/92969_25283_5321.jpg')
-    embed.add_field(name = "사용 설명서", value = "- (필수) =join 한 다음 인정-music 채널 가서 제목만 적으세요 \n- 딜레이 심하니까 될때까지 기다렸다가 입력하세요 안그럼 오류남 \n( 오류나면 =stop 하고 다시하면 돼요 ) \n- 다른 채널이나 채널 안들어가 있어도 노래 틀 수 있어요", inline = False)
+    embed.add_field(name = "사용 설명서", value = "- (필수) =join 한 다음 인정-music 채널 가서 제목만 적으세요 \n- 딜레이 심하니까 될때까지 기다렸다가 입력하세요 \n- ( 오류나면 =stop 하고 다시하면 돼요 ) \n- 다른 채널이나 채널 안들어가 있어도 노래 틀 수 있어요", inline = False)
     embed.add_field(name = "이모지 사용법", value = "- (=resume) (=pause) (=stop) (=skip) \n- 이모지 한번 누르면 취소했다가 다시 눌러야 작동함", inline = False)
     embed.add_field(name = "Command", value = "/join /leave /play (노래제목) /n (검색어) /g (검색어) \n/queuedel (숫자) /queue /queueclear \n/musicinfo /pause /resume /skip /stop \n/musicchannel /music_ch_video /music_ch_queue", inline = False)
     await ctx.send(embed=embed)
@@ -219,11 +233,11 @@ async def play(ctx, *, msg):
             info = ydl.extract_info(url, download=False)
         URL = info['formats'][0]['url']
         
-        '''
+        
         embed = discord.Embed(title = entireText, description = "")
         embed.set_image(url = thumbnail)
         await ctx.send(embed=embed)
-        '''
+        
         
         vc.play(discord.FFmpegPCMAudio(URL, **FFMPEG_OPTIONS), after=lambda e: music_play_next(ctx))
 
@@ -395,14 +409,12 @@ async def musicchannel(ctx):
             embed_music = discord.Embed(title='인정 Music \n' + music_now[0], description='')
             embed_music.set_image(url=music_thumbnail[0])
             await music_msg.edit(embed=embed_music)
-            
+                
         except:
             if not vc.is_playing():
                 embed_music_f = discord.Embed(title='인정 Music', description='')
                 embed_music_f.set_image(url='https://i.ytimg.com/vi/1SLr62VBBjw/hq720.jpg?sqp=-oaymwEcCOgCEMoBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCbXp098HNZl_SbZ5Io5GuHd6M4CA')
                 await music_msg.edit(embed=embed_music_f)
-            else:
-                pass
             
 # 봇 전용 음악 채널 버튼 만들기
 @bot.command(pass_context = True)
@@ -556,6 +568,20 @@ async def g(ctx, *, keyword):
     else :
         embed = discord.Embed(title= '검색결과 없음')
     await ctx.send(embed=embed)
+    
+
+@bot.command()
+async def delete_channel(ctx, channel_name):
+   # check if the channel exists
+   guild = ctx.message.guild
+   existing_channel = discord.utils.get(guild.channels, name=channel_name)
+   
+   # if the channel exists
+   if existing_channel is not None:
+      await existing_channel.delete()
+   # if the channel does not exist, inform the user
+   else:
+      await ctx.send(f'"{channel_name}"이 존재하지 않아요')
 
 
     
