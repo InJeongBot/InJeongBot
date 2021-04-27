@@ -37,10 +37,10 @@ async def on_ready():
     print(bot.user.name)
     print('TOKEN =', TOKEN)
     print('Successly access')
-'''
+
     if not discord.opus.is_loaded():
         discord.opus.load_opus('opus')
-'''
+
 
 
 # 봇 전용 채널
@@ -234,9 +234,9 @@ async def play(ctx, *, msg):
         URL = info['formats'][0]['url']
         
         
-        embed = discord.Embed(title = entireText, description = "")
-        embed.set_image(url = thumbnail)
-        await ctx.send(embed=embed)
+        #embed = discord.Embed(title = entireText, description = "")
+        #embed.set_image(url = thumbnail)
+        #await ctx.send(embed=embed)
         
         
         vc.play(discord.FFmpegPCMAudio(URL, **FFMPEG_OPTIONS), after=lambda e: music_play_next(ctx))
