@@ -164,7 +164,7 @@ async def join(ctx):
         try:
             await vc.move_to(ctx.message.author.voice.channel)
         except:
-            await ctx.send("채널에 접속해 주세요")
+            pass
 
    
 # Command /leave
@@ -178,15 +178,10 @@ async def leave(ctx):
 @bot.command()
 async def play(ctx, *, msg):
     try:
-        global vc
-        vc = await ctx.message.author.voice.channel.connect()
+        join(bot)
     except:
-        try:
-            await vc.move_to(ctx.message.author.voice.channel)
-        except:
-            pass
-            #await ctx.send("채널에 접속해 주세요")
-            
+        pass
+    
     if not vc.is_playing():
 
         options = webdriver.ChromeOptions()
