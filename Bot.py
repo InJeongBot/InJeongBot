@@ -151,7 +151,7 @@ async def 도움말(ctx):
     embed = discord.Embed(title = "인정봇", description = "")
     embed.set_author(name = "ㅇㅈ#6079", icon_url = 'http://www.palnews.co.kr/news/photo/201801/92969_25283_5321.jpg')
     embed.add_field(name = "사용 설명서", value = "- (필수) =join 한 다음 인정-music 채널 가서 제목만 적으세요 \n- 딜레이 심하니까 될때까지 기다렸다가 입력하세요 안그럼 오류남 \n( 오류나면 =stop 하고 다시하면 돼요 ) \n- 다른 채널이나 채널 안들어가 있어도 노래 틀 수 있어요", inline = False)
-    embed.add_field(name = "이모지 사용법", value = "- (=resume) (=pause) (=stop) (=skip) \n- 이모지 한번 누르면 취소했다가 다시 눌러야 작동함"
+    embed.add_field(name = "이모지 사용법", value = "- (=resume) (=pause) (=stop) (=skip) \n- 이모지 한번 누르면 취소했다가 다시 눌러야 작동함", inline = False)
     embed.add_field(name = "Command", value = "/join /leave /play (노래제목) /n (검색어) /g (검색어) \n/queuedel (숫자) /queue /queueclear \n/musicinfo /pause /resume /skip /stop \n/musicchannel /music_ch_video /music_ch_queue", inline = False)
     await ctx.send(embed=embed)
 
