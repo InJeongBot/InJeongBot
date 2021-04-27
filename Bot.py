@@ -50,7 +50,7 @@ async def on_message(msg):
         return None
     topic = msg.channel.topic
     if topic != None and '#인정_Music' in topic:
-        await play(client, msg=msg.content)
+        await play(ctx, msg=msg.content)
         await msg.delete()
     else:
         await bot.process_commands(msg)
