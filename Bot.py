@@ -221,8 +221,9 @@ async def play(ctx, *, msg):
         embed = discord.Embed(title = entireText, description = "")
         embed.set_image(url = thumbnail)
         await ctx.send(embed=embed)
-        vc.play(discord.FFmpegPCMAudio(URL, **FFMPEG_OPTIONS), after=lambda e: music_play_next(ctx))
         '''
+        
+        vc.play(discord.FFmpegPCMAudio(URL, **FFMPEG_OPTIONS), after=lambda e: music_play_next(ctx))
                 
     else:
         music_user.append(msg)
