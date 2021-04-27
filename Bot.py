@@ -376,7 +376,7 @@ async def stop(ctx):
 async def musicchannel(ctx):
     global vc
     global music_msg
-
+    
     await ctx.guild.create_text_channel(name = "인정 Music", topic = '#인정_Music')
 
     all_channels = ctx.guild.text_channels
@@ -389,11 +389,16 @@ async def musicchannel(ctx):
     embed.set_image(url = 'https://i.ytimg.com/vi/1SLr62VBBjw/hq720.jpg?sqp=-oaymwEcCOgCEMoBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCbXp098HNZl_SbZ5Io5GuHd6M4CA')
                                    
     music_msg = await InJeongbot_music_ch.send('노래 목록 \n', embed=embed)
+    await music_msg.add_reaction('▶')
+    await music_msg.add_reaction('⏸')
+    await music_msg.add_reaction('⏹')
+    await music_msg.add_reaction('⏭')
 
-    await musicvideo(bot)
     
     while True:
         try:
+            await musicvideo(bot)
+            
             embed_music = discord.Embed(title='인정 Music \n' + music_now[0], description='')
             embed_music.set_image(url=music_thumbnail[0])
             await music_msg.edit(embed=embed_music)
@@ -408,59 +413,52 @@ async def musicchannel(ctx):
 # 봇 전용 채널 뮤직비디오 만들기
 @bot.command(pass_context = True)
 async def musicvideo(ctx):
-    await music_msg.add_reaction('▶')
-    await music_msg.add_reaction('⏸')
-    await music_msg.add_reaction('⏹')
-    await music_msg.add_reaction('⏭')
-    
-    while True:
-        try:
-            def check(reaction, user):
-                return str(reaction) in ['▶', '⏸', '⏹', '⏭'] and user == ctx.author and reaction.message.id == music_msg.id
+    try:
+        def check(reaction, user):
+            return str(reaction) in ['▶', '⏸', '⏹', '⏭'] and user == ctx.author and reaction.message.id == music_msg.id
 
-            reaction, user = await bot.wait_for('reaction_add', check=check)
+        reaction, user = await bot.wait_for('reaction_add', check=check)
 
-            if (str(reaction) == '▶' ):
+        if (str(reaction) == '▶' ):
+            try:
+                vc.resume()
+            except:
+                pass
+
+        if (str(reaction) == '⏸'):
+            try:
+                vc.pause()
+            except:
+                pass
+
+        if (str(reaction) == '⏹'):
+            if vc.is_playing():
+                vc.stop()
                 try:
-                    vc.resume()
+                    ex = len(music_now) - len(music_user)
+                    del music_user[:]
+                    del music_title[:]
+                    del music_queue[:]
+                    del music_thumbnail[:]
+                    while True:
+                        try:
+                            del music_now[ex]
+                        except:
+                            break
                 except:
                     pass
-
-            if (str(reaction) == '⏸'):
-                try:
-                    vc.pause()
-                except:
-                    pass
-
-            if (str(reaction) == '⏹'):
-                if vc.is_playing():
-                    vc.stop()
-                    try:
-                        ex = len(music_now) - len(music_user)
-                        del music_user[:]
-                        del music_title[:]
-                        del music_queue[:]
-                        del music_thumbnail[:]
-                        while True:
-                            try:
-                                del music_now[ex]
-                            except:
-                                break
-                    except:
-                        pass
         
-            client.loop.create_task(vc.disconnect())
+        client.loop.create_task(vc.disconnect())
         
    
 
 
-            if (str(reaction) == '⏭'):
-                if vc.is_playing():
-                    if len(music_user) >= 1:
-                        vc.stop()
-        except:
-             pass
-
+        if (str(reaction) == '⏭'):
+            if vc.is_playing():
+                if len(music_user) >= 1:
+                    vc.stop()
+    except:
+        pass
 
     
 # Command /n (내용)
