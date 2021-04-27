@@ -37,11 +37,11 @@ async def on_ready():
     print(bot.user.name)
     print('TOKEN =', TOKEN)
     print('Successly access')
-'''
+
     if not discord.opus.is_loaded():
         discord.opus.load_opus('opus')
 
-'''
+
 
 # 봇 전용 채널
 @bot.event
@@ -50,7 +50,7 @@ async def on_message(msg):
         return None
     topic = msg.channel.topic
     if topic != None and '#인정_Music' in topic:
-        await play(bot, msg=msg)
+        # await play(bot, msg=msg.content)
         await msg.delete()
     else:
         await bot.process_commands(msg)
@@ -148,7 +148,7 @@ def load_chrome_driver():
 # Command /도움말
 @bot.command()
 async def 도움말(ctx):
-    embed = discord.Embed(title = "인정봇", description = "", color = 0x00ff00)
+    embed = discord.Embed(title = "인정봇", description = "")
     embed.set_author(name = "ㅇㅈ#6079", icon_url = 'http://www.palnews.co.kr/news/photo/201801/92969_25283_5321.jpg')
     embed.add_field(name = "Command", value = "/join /leave /play (노래제목) /n (검색어) /g (검색어) \n/queuedel (숫자) /queue /queueclear \n/musicinfo /pause /resume /skip /stop \n/musicchannel /music_ch_video /music_ch_queue", inline = True)
     await ctx.send(embed=embed)
@@ -217,11 +217,12 @@ async def play(ctx, *, msg):
             info = ydl.extract_info(url, download=False)
         URL = info['formats'][0]['url']
         
-        
-        embed = discord.Embed(title = entireText, description = "", color = 0x00ff00)
+        '''
+        embed = discord.Embed(title = entireText, description = "")
         embed.set_image(url = thumbnail)
         await ctx.send(embed=embed)
         vc.play(discord.FFmpegPCMAudio(URL, **FFMPEG_OPTIONS), after=lambda e: music_play_next(ctx))
+        '''
                 
     else:
         music_user.append(msg)
@@ -264,7 +265,7 @@ async def queue(ctx):
         for i in range(len(music_title)):
             Text = Text + "\n" + str(i + 1) + ". " + str(music_title[i])
             
-        await ctx.send(embed = discord.Embed(title = "노래목록", description = Text.strip(), color = 0x00ff00))
+        await ctx.send(embed = discord.Embed(title = "노래목록", description = Text.strip()))
 
 
 # Command /queueclear
@@ -338,9 +339,6 @@ async def skip(ctx):
         if len(music_user) >= 1:
             vc.stop()
 
-            embed = discord.Embed(title = music_now[1], description = "", color = 0x00ff00)
-            embed.set_image(url=music_thumbnail[1])
-            await ctx.send(embed=embed)
         else:
             await ctx.send("스킵할 노래가 없네요")
     else:
@@ -371,7 +369,7 @@ async def stop(ctx):
         await ctx.send("노래를 재생하고 있지 않네요")
 
 
-# 봇 전용 채널 만들기
+# 봇 전용 음악 채널 만들기
 @bot.command(pass_context = True)
 async def musicchannel(ctx):
     global vc
@@ -405,7 +403,7 @@ async def musicchannel(ctx):
             else:
                 pass
             
-# 봇 전용 채널 뮤직비디오 만들기
+# 봇 전용 음악 채널 버튼 만들기
 @bot.command(pass_context = True)
 async def music_ch_video(ctx):
     await music_msg.add_reaction('▶')
@@ -449,7 +447,7 @@ async def music_ch_video(ctx):
                     except:
                         pass
             
-                client.loop.create_task(vc.disconnect())
+                    client.loop.create_task(vc.disconnect())
 
             if (str(reaction) == '⏭'):
                 if vc.is_playing():
@@ -457,16 +455,20 @@ async def music_ch_video(ctx):
                         vc.stop()
         except:
             pass
-        
+
+# 봇 전용 음악 채널 노래 목록 만들기
 @bot.command(pass_context = True)
-async def music_Ch_queue(ctx):
+async def music_ch_queue(ctx):
     while True:
         try:
-            Text = ""
+            text = []
             for i in range(len(music_title)):
-                Text = Text + "\n" + str(i + 1) + ". " + str(music_title[i])
-                
-            await music_msg.edit(content = Text.strip())
+                text.append('' + "\n" + str(i + 1) + ". " + str(music_title[i]))
+            text.reverse()
+            Text = ''
+            for i in range(len(text)):
+                Text = Text + str(text[i])
+            await music_msg.edit(content = '노래 목록 \n' + Text.strip())
         except:
             pass
             
@@ -503,13 +505,13 @@ async def n(ctx, *, keyword):
     
     if n > 0 :
         r = random.randint(0,n)
-        embed = discord.Embed(title= keyword, color = 0x00ff00)
+        embed = discord.Embed(title= keyword)
         embed.set_image(url = links[r])
     elif n == 0 :
-        embed = discord.Embed(title= keyword, color = 0x00ff00)
+        embed = discord.Embed(title= keyword)
         embed.set_image(url = links[0])
     else :
-        embed = discord.Embed(title= '검색결과 없음', color = 0x00ff00)
+        embed = discord.Embed(title= '검색결과 없음')
     await ctx.send(embed=embed)
 
 
@@ -545,14 +547,15 @@ async def g(ctx, *, keyword):
     
     if n > 0 :
         r = random.randint(0,n)
-        embed = discord.Embed(title= keyword, color = 0x00ff00)
+        embed = discord.Embed(title= keyword)
         embed.set_image(url = links[r])
     elif n == 0 :
-        embed = discord.Embed(title= keyword, color = 0x00ff00)
+        embed = discord.Embed(title= keyword)
         embed.set_image(url = links[0])
     else :
-        embed = discord.Embed(title= '검색결과 없음', color = 0x00ff00)
+        embed = discord.Embed(title= '검색결과 없음')
     await ctx.send(embed=embed)
+
 
     
 TOKEN = os.environ['BOT_TOKEN']
