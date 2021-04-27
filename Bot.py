@@ -225,13 +225,11 @@ async def play(ctx, *, msg):
         '''
         
         vc.play(discord.FFmpegPCMAudio(URL, **FFMPEG_OPTIONS), after=lambda e: music_play_next(ctx))
-                
+
     else:
         music_user.append(msg)
         result, URLTEST = f_music_title(msg)
         music_queue.append(URLTEST)
-        
-    print('musicurl =', musicurl)
 
 
 # Command /queuedel (숫자)
