@@ -42,6 +42,7 @@ async def on_ready():
         discord.opus.load_opus('opus')
 
 
+
 # 봇 전용 채널
 @bot.event
 async def on_message(msg):
@@ -448,11 +449,9 @@ async def musicvideo(ctx):
                     except:
                         pass
         
-        client.loop.create_task(vc.disconnect())
+            client.loop.create_task(vc.disconnect())
         
-    else:
-        await ctx.send("노래를 재생하고 있지 않네요")
-
+   
 
 
             if (str(reaction) == '⏭'):
@@ -546,7 +545,6 @@ async def g(ctx, *, keyword):
     else :
         embed = discord.Embed(title= '검색결과 없음', color = 0x00ff00)
     await ctx.send(embed=embed)
-
 
     
 TOKEN = os.environ['BOT_TOKEN']
