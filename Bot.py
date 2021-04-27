@@ -449,7 +449,7 @@ async def music_ch_video(ctx):
                     except:
                         pass
             
-            client.loop.create_task(vc.disconnect())
+                client.loop.create_task(vc.disconnect())
 
             if (str(reaction) == '⏭'):
                 if vc.is_playing():
