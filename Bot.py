@@ -50,7 +50,7 @@ async def on_message(msg):
         return None
     topic = msg.channel.topic
     if topic != None and '#인정_Music' in topic:
-        await play(ctx, msg=msg.content)
+        await botplay(bot, msg=msg.content)
         await msg.delete()
     else:
         await bot.process_commands(msg)
@@ -185,6 +185,64 @@ async def play(ctx, *, msg):
             await vc.move_to(ctx.message.author.voice.channel)
         except:
             await ctx.send("채널에 접속해 주세요")
+            
+    if not vc.is_playing():
+
+        options = webdriver.ChromeOptions()
+        options.add_argument("headless")
+            
+        global entireText
+        YDL_OPTIONS = {'format': 'bestaudio', 'noplaylist':'True'}
+        FFMPEG_OPTIONS = {'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5', 'options': '-vn'}
+        
+        driver = load_chrome_driver()
+        driver.get("https://www.youtube.com/results?search_query="+msg)
+        source = driver.page_source
+        bs = bs4.BeautifulSoup(source, 'lxml')
+        entire = bs.find_all('a', {'id': 'video-title'})
+        entireNum = entire[0]
+        entireText = entireNum.text.strip()
+        musicurl = entireNum.get('href')
+        url = 'https://www.youtube.com'+musicurl
+
+        video_number = musicurl[9:]
+        image_type = '0'
+        thumbnail = 'http://img.youtube.com/vi/'+ video_number +'/'+ image_type +'.jpg'
+
+        driver.quit()
+
+        music_now.insert(0, entireText)
+        music_thumbnail.insert(0, thumbnail)
+        with YoutubeDL(YDL_OPTIONS) as ydl:
+            info = ydl.extract_info(url, download=False)
+        URL = info['formats'][0]['url']
+        
+        '''
+        embed = discord.Embed(title = entireText, description = "")
+        embed.set_image(url = thumbnail)
+        await ctx.send(embed=embed)
+        '''
+        
+        vc.play(discord.FFmpegPCMAudio(URL, **FFMPEG_OPTIONS), after=lambda e: music_play_next(ctx))
+                
+    else:
+        music_user.append(msg)
+        result, URLTEST = f_music_title(msg)
+        music_queue.append(URLTEST)
+        
+    print('musicurl =', musicurl)
+
+    
+# Command /botplay 노래제목
+@bot.command()
+async def botplay(ctx, *, msg):
+    try:
+        global vc
+        vc = await ctx.message.author.voice.channel.connect()
+    except:
+        try:
+            await vc.move_to(ctx.message.author.voice.channel)
+        except:
             
     if not vc.is_playing():
 
