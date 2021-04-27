@@ -164,7 +164,7 @@ async def join(ctx):
         try:
             await vc.move_to(ctx.message.author.voice.channel)
         except:
-            pass
+            await ctx.send("채널에 입장해 주세요")
 
    
 # Command /leave
@@ -178,9 +178,13 @@ async def leave(ctx):
 @bot.command()
 async def play(ctx, *, msg):
     try:
-        join(bot)
+        global vc
+        vc = await ctx.message.author.voice.channel.connect()
     except:
-        pass
+        try:
+            await vc.move_to(ctx.message.author.voice.channel)
+        except:
+            pass
     
     if not vc.is_playing():
 
