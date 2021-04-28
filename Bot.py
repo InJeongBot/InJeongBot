@@ -614,6 +614,12 @@ async def delete_channel(ctx, channel_name):
    else:
       await ctx.send(f'"{channel_name}"이 존재하지 않아요')
 
+@bot.command()
+async def musicset(ctx):
+    await musicchannel(ctx)
+    await music_ch_video(ctx)
+    await music_ch_queue(ctx)
+
 
     
 TOKEN = os.environ['BOT_TOKEN']
