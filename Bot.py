@@ -174,7 +174,7 @@ async def leave(ctx):
     try:
         client.loop.create_task(vc.disconnect())
     except:
-        await ctx.send("인정봇이 채널에 들어가 있지 않네요")
+        await ctx.send("인정봇이 음성 채널에 들어가 있지 않네요")
 
 
 
