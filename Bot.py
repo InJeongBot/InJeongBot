@@ -37,23 +37,12 @@ async def on_ready():
     print(bot.user.name)
     print('TOKEN =', TOKEN)
     print('Successly access')
-
+'''
     if not discord.opus.is_loaded():
         discord.opus.load_opus('opus')
+'''
 
 
-
-# 봇 전용 채널
-@bot.event
-async def on_message(msg):
-    if msg.author.bot :
-        return None
-    topic = msg.channel.topic
-    if topic != None and '#인정_Music' in topic:
-        await play(bot, msg=msg.content)
-        await msg.delete()
-    else:
-        await bot.process_commands(msg)
         
 
 # f_music_title 함수
@@ -144,8 +133,7 @@ def music_play_next(ctx):
                         break
             except:
                 pass
-        
-            client.loop.create_task(vc.disconnect())
+            
 
 
 # 구글 드라이버 세팅 함수
@@ -163,7 +151,7 @@ def load_chrome_driver():
 @bot.command()
 async def 도움말(ctx):
     embed = discord.Embed(title = "인정봇", description = "")
-    embed.set_author(name = "ㅇㅈ#6079", icon_url = 'http://www.palnews.co.kr/news/photo/201801/92969_25283_5321.jpg')
+    embed.set_author(name = "ㅇㅈ#6079", icon_url = 'https://discord.com/channels/829572185727303712/836442008796659732/836531376286335026')
     embed.add_field(name = "사용 설명서", value = "- (필수) =join 한 다음 인정-music 채널 가서 제목만 적으세요 \n- 딜레이 심하니까 될때까지 기다렸다가 입력하세요 \n- ( 오류나면 =stop 하고 다시하면 돼요 ) \n- 다른 채널이나 채널 안들어가 있어도 노래 틀 수 있어요", inline = False)
     embed.add_field(name = "이모지 사용법", value = "- (=resume) (=pause) (=stop) (=skip) \n- 이모지 한번 누르면 취소했다가 다시 눌러야 작동함", inline = False)
     embed.add_field(name = "Command", value = "/join /leave /play (노래제목) /n (검색어) /g (검색어) \n/queuedel (숫자) /queue /queueclear \n/musicinfo /pause /resume /skip /stop \n/musicchannel /music_ch_video /music_ch_queue", inline = False)
@@ -389,8 +377,9 @@ async def stop(ctx):
 async def musicchannel(ctx):
     global vc
     global music_msg
-    
-    await ctx.guild.create_text_channel(name = "인정 Music", topic = '#인정_Music')
+
+    category = discord.utils.get(ctx.guild.channels, name="채팅 채널")
+    channel = await ctx.guild.create_text_channel(name = "인정 Music", topic = '#인정_Music')
 
     all_channels = ctx.guild.text_channels
 
@@ -398,11 +387,13 @@ async def musicchannel(ctx):
     
     InJeongbot_music_ch = bot.get_channel(InJeongbot_music_ch_id)
     
+    await channel.edit(category = category)
+    await channel.edit(position = 100)
+    
     embed = discord.Embed(title='인정 Music', description='')
     embed.set_image(url = 'https://i.ytimg.com/vi/1SLr62VBBjw/hq720.jpg?sqp=-oaymwEcCOgCEMoBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCbXp098HNZl_SbZ5Io5GuHd6M4CA')
                                    
     music_msg = await InJeongbot_music_ch.send('노래 목록 \n', embed=embed)
-
     
     while True:
         try:
@@ -415,7 +406,7 @@ async def musicchannel(ctx):
                 embed_music_f = discord.Embed(title='인정 Music', description='')
                 embed_music_f.set_image(url='https://i.ytimg.com/vi/1SLr62VBBjw/hq720.jpg?sqp=-oaymwEcCOgCEMoBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCbXp098HNZl_SbZ5Io5GuHd6M4CA')
                 await music_msg.edit(embed=embed_music_f)
-            
+
 # 봇 전용 음악 채널 버튼 만들기
 @bot.command(pass_context = True)
 async def music_ch_video(ctx):
@@ -568,18 +559,38 @@ async def g(ctx, *, keyword):
     else :
         embed = discord.Embed(title= '검색결과 없음')
     await ctx.send(embed=embed)
-    
+
+# 봇 음악 전용 채널
+@bot.event
+async def on_message(msg):
+    if msg.author.bot :
+        return None
+    topic = msg.channel.topic
+    if topic != None and '#인정_Music' in topic:
+        await play(bot, msg=msg.content)
+        await msg.delete()
+        
+        try:
+            embed_music = discord.Embed(title='인정 Music \n' + music_now[0], description='')
+            embed_music.set_image(url=music_thumbnail[0])
+            await music_msg.edit(embed=embed_music)
+                
+        except:
+            pass
+    else:
+        await bot.process_commands(msg)
+
 
 @bot.command()
 async def delete_channel(ctx, channel_name):
-   # check if the channel exists
+
    guild = ctx.message.guild
    existing_channel = discord.utils.get(guild.channels, name=channel_name)
    
-   # if the channel exists
+
    if existing_channel is not None:
       await existing_channel.delete()
-   # if the channel does not exist, inform the user
+
    else:
       await ctx.send(f'"{channel_name}"이 존재하지 않아요')
 
