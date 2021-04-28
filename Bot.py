@@ -171,7 +171,10 @@ async def join(ctx):
 # Command /leave
 @bot.command()
 async def leave(ctx):
-    client.loop.create_task(vc.disconnect())
+    try:
+        client.loop.create_task(vc.disconnect())
+    except:
+        await ctx.send("인정봇이 채널에 들어가 있지 않네요")
 
 
 
@@ -462,8 +465,10 @@ async def music_ch_video(ctx):
                                 break
                     except:
                         pass
-                
-                client.loop.create_task(vc.disconnect())
+                try:
+                    client.loop.create_task(vc.disconnect())
+                except:
+                    pass
 
             if (str(reaction) == '⏭'):
                 if vc.is_playing():
