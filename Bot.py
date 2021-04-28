@@ -616,9 +616,18 @@ async def delete_channel(ctx, channel_name):
 
 @bot.command()
 async def musicset(ctx):
-    await musicchannel(ctx)
-    await music_ch_video(ctx)
-    await music_ch_queue(ctx)
+    try:
+        await musicchannel(ctx)
+    except:
+        pass
+    try:
+        await music_ch_video(ctx)
+    except:
+        pass
+    try:
+        await music_ch_queue(ctx)
+    except:
+        pass
 
 
     
