@@ -378,7 +378,7 @@ async def musicchannel(ctx):
     global vc
     global music_msg
 
-    category = discord.utils.get(ctx.guild.channels, name="채팅 채널")
+    category = discord.utils.get(ctx.guild.channels, id=832545338002767920)
     channel = await ctx.guild.create_text_channel(name = "인정 Music", topic = '#인정_Music')
 
     all_channels = ctx.guild.text_channels
