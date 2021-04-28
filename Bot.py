@@ -352,24 +352,25 @@ async def skip(ctx):
 async def stop(ctx):
     if vc.is_playing():
         vc.stop()
-        try:
-            ex = len(music_now) - len(music_user)
-            del music_user[:]
-            del music_title[:]
-            del music_queue[:]
-            del music_thumbnail[:]
-            while True:
-                try:
-                    del music_now[ex]
-                except:
-                    break
-        except:
-            pass
-        
-        client.loop.create_task(vc.disconnect())
-        
     else:
         await ctx.send("노래를 재생하고 있지 않네요")
+    try:
+        ex = len(music_now) - len(music_user)
+        del music_user[:]
+        del music_title[:]
+        del music_queue[:]
+        del music_thumbnail[:]
+        while True:
+            try:
+                del music_now[ex]
+            except:
+                break
+    except:
+        pass
+    try:
+        client.loop.create_task(vc.disconnect())
+    except:
+        pass
 
 
 # 봇 전용 음악 채널 만들기
