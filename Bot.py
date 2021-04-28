@@ -445,7 +445,10 @@ async def music_ch_video(ctx):
 
             if (str(reaction) == '⏹'):
                 if vc.is_playing():
-                    vc.stop()
+                    try:
+                        vc.stop()
+                    except:
+                        pass
                     try:
                         ex = len(music_now) - len(music_user)
                         del music_user[:]
