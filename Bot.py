@@ -614,22 +614,6 @@ async def delete_channel(ctx, channel_name):
    else:
       await ctx.send(f'"{channel_name}"이 존재하지 않아요')
 
-@bot.command()
-async def musicset(ctx):
-    global vc
-    global music_msg
-    try:
-        await musicchannel(ctx)
-    except:
-        pass
-    try:
-        await music_ch_video(ctx)
-    except:
-        pass
-    try:
-        await music_ch_queue(ctx)
-    except:
-        pass
 
 
     
