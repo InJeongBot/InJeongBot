@@ -37,10 +37,10 @@ async def on_ready():
     print(bot.user.name)
     print('TOKEN =', TOKEN)
     print('Successly access')
-'''
+
     if not discord.opus.is_loaded():
         discord.opus.load_opus('opus')
-'''
+
 
 
         
@@ -410,6 +410,7 @@ async def musicchannel(ctx):
 # 봇 전용 음악 채널 버튼 만들기
 @bot.command(pass_context = True)
 async def music_ch_video(ctx):
+    await music_msg.add_reaction('✅')
     await music_msg.add_reaction('▶')
     await music_msg.add_reaction('⏸')
     await music_msg.add_reaction('⏹')
@@ -418,10 +419,21 @@ async def music_ch_video(ctx):
     while True:
         try:
             def check(reaction, user):
-                return str(reaction) in ['▶', '⏸', '⏹', '⏭'] and user == ctx.author and reaction.message.id == music_msg.id
+                return str(reaction) in ['✅','▶', '⏸', '⏹', '⏭'] and user == ctx.author and reaction.message.id == music_msg.id
 
             reaction, user = await bot.wait_for('reaction_add', check=check)
 
+            if (str(reaction) == '✅'):
+                try:
+                    global vc
+                    vc = await ctx.message.author.voice.channel.connect()
+                except:
+                    try:
+                        await vc.move_to(ctx.message.author.voice.channel)
+                    except:
+                        pass
+                    
+            
             if (str(reaction) == '▶' ):
                 try:
                     vc.resume()
@@ -457,22 +469,6 @@ async def music_ch_video(ctx):
                 if vc.is_playing():
                     if len(music_user) >= 1:
                         vc.stop()
-        except:
-            pass
-
-# 봇 전용 음악 채널 노래 목록 만들기
-@bot.command(pass_context = True)
-async def music_ch_queue(ctx):
-    while True:
-        try:
-            text = []
-            for i in range(len(music_title)):
-                text.append('' + "\n" + str(i + 1) + ". " + str(music_title[i]))
-            text.reverse()
-            Text = ''
-            for i in range(len(text)):
-                Text = Text + str(text[i])
-            await music_msg.edit(content = '노래 목록 \n' + Text.strip())
         except:
             pass
             
