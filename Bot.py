@@ -616,6 +616,8 @@ async def delete_channel(ctx, channel_name):
 
 @bot.command()
 async def musicset(ctx):
+    global vc
+    global music_msg
     try:
         await musicchannel(ctx)
     except:
