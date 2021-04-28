@@ -16,6 +16,8 @@ from urllib.parse import quote_plus
 import os
 
 import random
+
+
 bot = commands.Bot(command_prefix = '=')
 client = discord.Client()
 
@@ -38,7 +40,6 @@ async def on_ready():
 
     if not discord.opus.is_loaded():
         discord.opus.load_opus('opus')
-
 
         
 
@@ -367,6 +368,7 @@ async def stop(ctx):
                 break
     except:
         pass
+        
     try:
         client.loop.create_task(vc.disconnect())
     except:
@@ -470,7 +472,7 @@ async def music_ch_video(ctx):
                     client.loop.create_task(vc.disconnect())
                 except:
                     pass
-
+                    
             if (str(reaction) == '⏭'):
                 if vc.is_playing():
                     if len(music_user) >= 1:
