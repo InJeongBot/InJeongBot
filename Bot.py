@@ -377,11 +377,11 @@ async def stop(ctx):
 
 # 봇 전용 음악 채널 만들기
 @bot.command(pass_context = True)
-async def musicchannel(ctx):
+async def musicchannel(ctx, chname, msg):
     global vc
     global music_msg
 
-    category = discord.utils.get(ctx.guild.channels, id=832545338002767920)
+    category = discord.utils.get(ctx.guild.channels, id=int(msg))
     channel = await ctx.guild.create_text_channel(name = "music천둥", topic = '#인정_Music')
 
     all_channels = ctx.guild.text_channels
