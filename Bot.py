@@ -37,7 +37,7 @@ async def on_ready():
     print(bot.user.name)
     print('TOKEN =', TOKEN)
     print('Successly access')
-
+    
     if not discord.opus.is_loaded():
         discord.opus.load_opus('opus')
 
@@ -222,10 +222,12 @@ async def play(ctx, *, msg):
             info = ydl.extract_info(url, download=False)
         URL = info['formats'][0]['url']
         
-        
-        #embed = discord.Embed(title = entireText, description = "")
-        #embed.set_image(url = thumbnail)
-        #await ctx.send(embed=embed)
+        try:
+            embed = discord.Embed(title = entireText, description = "")
+            embed.set_image(url = thumbnail)
+            await ctx.send(embed=embed)
+        except:
+            pass
         
         
         vc.play(discord.FFmpegPCMAudio(URL, **FFMPEG_OPTIONS), after=lambda e: music_play_next(ctx))
@@ -397,7 +399,12 @@ async def musicchannel(ctx, chname, msg):
     embed.set_image(url = 'https://i.ytimg.com/vi/1SLr62VBBjw/hq720.jpg?sqp=-oaymwEcCOgCEMoBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCbXp098HNZl_SbZ5Io5GuHd6M4CA')
                                    
     music_msg = await InJeongbot_music_ch.send('노래 목록 \n', embed=embed)
-    
+
+    music_reaction_list = ['✅','▶','⏸','⏹','⏭','']
+    for n in music_reaction_list:
+        await music_msg.add_reaction(n)
+
+
     while True:
         try:
             embed_music = discord.Embed(title='인정 Music \n' + music_now[0], description='')
@@ -411,74 +418,60 @@ async def musicchannel(ctx, chname, msg):
                 await music_msg.edit(embed=embed_music_f)
 
 # 봇 전용 음악 채널 버튼 만들기
-@bot.command(pass_context = True)
-async def music_ch_video(ctx):
-    await music_msg.add_reaction('✅')
-    await music_msg.add_reaction('▶')
-    await music_msg.add_reaction('⏸')
-    await music_msg.add_reaction('⏹')
-    await music_msg.add_reaction('⏭')
+@bot.event
+async def music_ch_video(reaction, user):
     
-    while True:
+    if (reaction.emoji == '✅'):
         try:
-            def check(reaction, user):
-                return str(reaction) in ['✅','▶', '⏸', '⏹', '⏭'] and user == ctx.author and reaction.message.id == music_msg.id
+            global vc
+            vc = await ctx.message.author.voice.channel.connect()
+        except:
+            try:
+                await vc.move_to(ctx.message.author.voice.channel)
+            except:
+                pass
 
-            reaction, user = await bot.wait_for('reaction_add', check=check)
 
-            if (str(reaction) == '✅'):
-                try:
-                    global vc
-                    vc = await ctx.message.author.voice.channel.connect()
-                except:
-                    try:
-                        await vc.move_to(ctx.message.author.voice.channel)
-                    except:
-                        pass
-                    
-            
-            if (str(reaction) == '▶' ):
-                try:
-                    vc.resume()
-                except:
-                    pass
-
-            if (str(reaction) == '⏸'):
-                try:
-                    vc.pause()
-                except:
-                    pass
-
-            if (str(reaction) == '⏹'):
-                if vc.is_playing():
-                    try:
-                        vc.stop()
-                    except:
-                        pass
-                    try:
-                        ex = len(music_now) - len(music_user)
-                        del music_user[:]
-                        del music_title[:]
-                        del music_queue[:]
-                        del music_thumbnail[:]
-                        while True:
-                            try:
-                                del music_now[ex]
-                            except:
-                                break
-                    except:
-                        pass
-                try:
-                    client.loop.create_task(vc.disconnect())
-                except:
-                    pass
-                    
-            if (str(reaction) == '⏭'):
-                if vc.is_playing():
-                    if len(music_user) >= 1:
-                        vc.stop()
+    if (reaction.emoji == '▶' ):
+        try:
+            vc.resume()
         except:
             pass
+
+    if (reaction.emoji == '⏸'):
+        try:
+            vc.pause()
+        except:
+            pass
+
+    if (reaction.emoji == '⏹'):
+        if vc.is_playing():
+            try:
+                vc.stop()
+            except:
+                pass
+            try:
+                ex = len(music_now) - len(music_user)
+                del music_user[:]
+                del music_title[:]
+                del music_queue[:]
+                del music_thumbnail[:]
+                while True:
+                    try:
+                        del music_now[ex]
+                    except:
+                        break
+            except:
+                pass
+        try:
+            client.loop.create_task(vc.disconnect())
+        except:
+            pass
+
+    if (reaction.emoji == '⏭'):
+        if vc.is_playing():
+            if len(music_user) >= 1:
+                vc.stop()
 
 # 봇 전용 음악 채널 노래 목록 만들기
 @bot.command(pass_context = True)
@@ -496,7 +489,7 @@ async def music_ch_queue(ctx):
         except:
             pass
             
-    
+
 # Command /n (내용)
 @bot.command()
 async def n(ctx, *, keyword):
@@ -615,6 +608,64 @@ async def delete_channel(ctx, channel_name):
       await ctx.send(f'"{channel_name}"이 존재하지 않아요')
 
 
+# 추가 기능
+@bot.command(pass_context = True)
+async def dkssud(ctx, chname, msg):
+    global vc
+
+    category = discord.utils.get(ctx.guild.channels, id=int(msg))
+    channel = await ctx.guild.create_text_channel(name = chname, topic = '#인정_Music')
+
+    all_channels = ctx.guild.text_channels
+
+    idd = all_channels[len(all_channels) - 1].id
+    
+    ch = bot.get_channel(idd)
+    
+    await channel.edit(category = category)
+    await channel.edit(position = 100)
+    
+    embed = discord.Embed(title='인정 Music', description='')
+    embed.set_image(url = 'https://i.ytimg.com/vi/1SLr62VBBjw/hq720.jpg?sqp=-oaymwEcCOgCEMoBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCbXp098HNZl_SbZ5Io5GuHd6M4CA')
+                                   
+    dkssud = await ch.send('노래 목록 \n', embed=embed)
+
+    await dkssud.add_reaction('✅')
+    await dkssud.add_reaction('▶')
+    await dkssud.add_reaction('⏸')
+    await dkssud.add_reaction('⏹')
+    await dkssud.add_reaction('⏭')
+
+# 추가 기능
+@bot.command()
+async def j(ctx):
+    if ctx.message.author.voice and ctx.message.author.voice.channel:
+        try:
+            global ds
+            channel = ctx.message.author.voice.channel
+            ds = await channel.connect()
+        except:
+            await ds.move_to(ctx.author.voice.channel)
+    else:
+        await ctx.send("채널 연결좀")
+
+# 추가 기능
+@bot.command()
+async def l(ctx):
+    print(ctx.message.author.voice.channel)
+    print(bot.voice_clients)
+    await bot.voice_clients[0].disconnect()
+    print(bot.voice_clients)
+
+# 추가 기능
+@bot.command(pass_context = True)
+async def create_channel(ctx, chname, msg):
+
+    category = discord.utils.get(ctx.guild.channels, id=int(msg))
+    channel = await ctx.guild.create_text_channel(name = chname, topic = '인정')
+    
+    await channel.edit(category = category)
+    await channel.edit(position = 100)
 
     
 TOKEN = os.environ['BOT_TOKEN']
