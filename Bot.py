@@ -700,8 +700,19 @@ async def 하이빅스비(ctx):
 
 # ㅅㄹ ㄱ 매크로
 txt = ["thffod.txt","gkdl.txt"]
-thffod = ['<솔랭고파일>', '솔랭', 'thffod', 'ㅅㄹ', 'tf', 'ㅅㄺ', '솔ㄹ랭', 'thfffod', '소랭', 'thfod', '설랭', 'tjffod', '듀오', 'ebdh', 'ㄷㅇ', '아이언', 'dkdldjs', '브론즈', 'qmfhswm', 'bronze', 'iron', 'duo', 'solo', 'rank', 'srg', 'SRG', 'thffh', 'fodzm', 'ソロ', 'ランク', '솔 랭']
-gkdl = ['<하이파일>', 'ㅎㅇ', 'gd', '하이', 'gkdl', 'ㅎ2', 'g2', 'hi', 'hello', '해위', '하위']
+thffod = []
+gkdl = []
+for i in txt:
+    infile = open(i ,encoding='UTF8')
+    txt_file = infile.readlines()
+    infile.close()
+    for n in txt_file:
+        if txt_file[0].strip() == '<솔랭고파일>':
+            thffod.append(n.strip())
+        elif txt_file[0].strip() == '<하이파일>':
+            gkdl.append(n.strip())
+
+
 
 # 주식 기능
 stock_commands = [ '주식정보', '내자산', '자산목록', '등록', '매수', '매도' ]
@@ -807,14 +818,12 @@ async def 자산목록(ctx):
 async def 등록(ctx, member: discord.Member, msg):
     n = 0
     m = 0
-    if member in stock_player_id:
-        n += 1
-    else:
-        pass
+    if member.id in stock_player_id:
+        n = 1
+
     if msg in stock_player:
-        m += 1
-    else:
-        pass
+        m = 1
+
     if n + m == 2:
         await ctx.send('```이미 등록되어 있습니다.```')
     elif n + m == 0:
@@ -920,7 +929,7 @@ async def on_message(msg):
             s = ''
             for n in range(len(stock_player_id)):
                 s += f'```{stock_player[n]} : {stock_money[n]}원```' + '\n'
-                await msg.channel.send(f'{s}')
+            await msg.channel.send(f'{s}')
 
         elif msg.content == '주식초기화':
             if msg.author.id == administrator_id:
@@ -978,6 +987,7 @@ async def on_message(msg):
                 print(stock_price_p)
                 print(stock_price_c)
                 await msg.channel.send('```주가가 변동되었습니다.```')
+
 
     
 TOKEN = os.environ['BOT_TOKEN']
