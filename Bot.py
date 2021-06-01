@@ -29,13 +29,13 @@ music_title = []
 music_queue = []
 music_now = []
 music_thumbnail = []
-'''
+
 music_var = [ music_user, music_title, music_queue, music_now, music_thumbnail ]
 discord_server_id = []
 discord_server_name = []
 server_id = 0
 music_var_num = 0
-'''
+
 # Command /comfirm_server_id
 @bot.command()
 async def comfirm_server_id(ctx):
@@ -68,9 +68,11 @@ async def on_ready():
     print(bot.user.name)
     print('TOKEN =', TOKEN)
     print('Successly access')
-
+'''
     if not discord.opus.is_loaded():
         discord.opus.load_opus('opus')
+'''
+
         
 
 # f_music_title 함수
@@ -448,7 +450,7 @@ async def musicchannel(ctx, chname, msg):
 
 # 봇 전용 음악 채널 버튼 만들기
 @bot.event()
-async def music_ch_video(reaction, user):
+async def music_ch_video(ctx, reaction):
     
     if (reaction.emoji == '✅'):
         try:
@@ -602,25 +604,6 @@ async def g(ctx, *, keyword):
         embed = discord.Embed(title= '검색결과 없음')
     await ctx.send(embed=embed)
 
-# 봇 음악 전용 채널
-@bot.event
-async def on_message(msg):
-    if msg.author.bot :
-        return None
-    topic = msg.channel.topic
-    if topic != None and '#인정_Music' in topic:
-        await play(bot, msg=msg.content)
-        await msg.delete()
-        
-        try:
-            embed_music = discord.Embed(title='인정 Music \n' + music_now[0], description='')
-            embed_music.set_image(url=music_thumbnail[0])
-            await music_msg.edit(embed=embed_music)
-                
-        except:
-            pass
-    else:
-        await bot.process_commands(msg)
 
 
 @bot.command()
@@ -877,7 +860,7 @@ async def stockchannel(ctx, chname, msg):
     await channel.edit(category = category)
     await channel.edit(position = 100)
 
-    
+
 @bot.event
 async def on_message(msg):
     global server_id
@@ -1004,7 +987,7 @@ async def on_message(msg):
                     n += 1
                 print(stock_price_p)
                 print(stock_price_c)
-                await msg.channel.send('```주식의 가격이 변동되었습니다.```')
+                await msg.channel.send('```주가가 변동되었습니다.```')
 
     
 TOKEN = os.environ['BOT_TOKEN']
