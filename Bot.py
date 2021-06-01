@@ -700,17 +700,8 @@ async def 하이빅스비(ctx):
 
 # ㅅㄹ ㄱ 매크로
 txt = ["thffod.txt","gkdl.txt"]
-thffod = []
-gkdl = []
-for i in txt:
-    infile = open(i ,encoding='UTF8')
-    txt_file = infile.readlines()
-    infile.close()
-    for n in txt_file:
-        if txt_file[0].strip() == '<솔랭고파일>':
-            thffod.append(n.strip())
-        elif txt_file[0].strip() == '<하이파일>':
-            gkdl.append(n.strip())
+thffod = ['<솔랭고파일>', '솔랭', 'thffod', 'ㅅㄹ', 'tf', 'ㅅㄺ', '솔ㄹ랭', 'thfffod', '소랭', 'thfod', '설랭', 'tjffod', '듀오', 'ebdh', 'ㄷㅇ', '아이언', 'dkdldjs', '브론즈', 'qmfhswm', 'bronze', 'iron', 'duo', 'solo', 'rank', 'srg', 'SRG', 'thffh', 'fodzm', 'ソロ', 'ランク', '솔 랭']
+gkdl = ['<하이파일>', 'ㅎㅇ', 'gd', '하이', 'gkdl', 'ㅎ2', 'g2', 'hi', 'hello', '해위', '하위']
 
 
 
