@@ -650,27 +650,6 @@ async def dkssud(ctx, chname, msg):
     await dkssud.add_reaction('⏭')
 
 # 추가 기능
-@bot.command()
-async def j(ctx):
-    if ctx.message.author.voice and ctx.message.author.voice.channel:
-        try:
-            global ds
-            channel = ctx.message.author.voice.channel
-            ds = await channel.connect()
-        except:
-            await ds.move_to(ctx.author.voice.channel)
-    else:
-        await ctx.send("채널 연결좀")
-
-# 추가 기능
-@bot.command()
-async def l(ctx):
-    print(ctx.message.author.voice.channel)
-    print(bot.voice_clients)
-    await bot.voice_clients[0].disconnect()
-    print(bot.voice_clients)
-
-# 추가 기능
 @bot.command(pass_context = True)
 async def create_channel(ctx, chname, msg):
 
@@ -699,7 +678,6 @@ async def 하이빅스비(ctx):
 
 
 # ㅅㄹ ㄱ 매크로
-txt = ["thffod.txt","gkdl.txt"]
 thffod = ['<솔랭고파일>', '솔랭', 'thffod', 'ㅅㄹ', 'tf', 'ㅅㄺ', '솔ㄹ랭', 'thfffod', '소랭', 'thfod', '설랭', 'tjffod', '듀오', 'ebdh', 'ㄷㅇ', '아이언', 'dkdldjs', '브론즈', 'qmfhswm', 'bronze', 'iron', 'duo', 'solo', 'rank', 'srg', 'SRG', 'thffh', 'fodzm', 'ソロ', 'ランク', '솔 랭']
 gkdl = ['<하이파일>', 'ㅎㅇ', 'gd', '하이', 'gkdl', 'ㅎ2', 'g2', 'hi', 'hello', '해위', '하위']
 
@@ -801,9 +779,9 @@ async def 내자산(ctx):
 async def 자산목록(ctx):
     s = ''
     for n in range(len(stock_player_id)):
-        s += f'```{stock_player[n]} : {stock_money[n]}원```' + '\n'
+        s += f'{stock_player[n]} : {stock_money[n]}원' + '\n'
 
-    await ctx.send(f'{s}')
+    await ctx.send(f'```{s}```')
 
 @bot.command()
 async def 등록(ctx, member: discord.Member, msg):
@@ -815,7 +793,7 @@ async def 등록(ctx, member: discord.Member, msg):
     if msg in stock_player:
         m = 1
 
-    if n + m == 2:
+    if n + m >= 1:
         await ctx.send('```이미 등록되어 있습니다.```')
     elif n + m == 0:
         stock_player_id.append(member.id)
@@ -919,8 +897,8 @@ async def on_message(msg):
         elif msg.content == '자산목록':
             s = ''
             for n in range(len(stock_player_id)):
-                s += f'```{stock_player[n]} : {stock_money[n]}원```' + '\n'
-            await msg.channel.send(f'{s}')
+                s += f'{stock_player[n]} : {stock_money[n]}원' + '\n'
+            await msg.channel.send(f'```{s}```')
 
         elif msg.content == '주식초기화':
             if msg.author.id == administrator_id:
@@ -978,7 +956,6 @@ async def on_message(msg):
                 print(stock_price_p)
                 print(stock_price_c)
                 await msg.channel.send('```주가가 변동되었습니다.```')
-
 
     
 TOKEN = os.environ['BOT_TOKEN']
