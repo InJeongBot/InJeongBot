@@ -18,8 +18,10 @@ import os
 import random
 
 
-bot = commands.Bot(command_prefix = '=')
+bot = commands.Bot(command_prefix = '`')
 client = discord.Client()
+
+administrator_id = 270403684389748736
 
 # 음악 목록
 music_user = []
@@ -27,7 +29,36 @@ music_title = []
 music_queue = []
 music_now = []
 music_thumbnail = []
-
+'''
+music_var = [ music_user, music_title, music_queue, music_now, music_thumbnail ]
+discord_server_id = []
+discord_server_name = []
+server_id = 0
+music_var_num = 0
+'''
+# Command /comfirm_server_id
+@bot.command()
+async def comfirm_server_id(ctx):
+    global server_id
+    global music_var_num
+    if server_id != ctx.guild.id:
+        while True:
+            if ctx.guild.id in discord_server_id:
+                server_id = ctx.guild.id
+                for i in range(len(discord_server_id)):
+                    if ctx.guild.id == discord_server_id[i]:
+                        music_var_num = i
+                        break
+            else:
+                discord_server_id.append(ctx.guild.id)
+                discord_server_name.append(ctx.guild.name)
+                continue
+            break
+        print(discord_server_name)
+        print(discord_server_id)
+        print(discord_server_name[music_var_num], discord_server_id[music_var_num])
+        print(server_id)
+        print(music_var_num)
 
 # Event 디스코드 시작
 @bot.event
@@ -37,10 +68,9 @@ async def on_ready():
     print(bot.user.name)
     print('TOKEN =', TOKEN)
     print('Successly access')
-    
+
     if not discord.opus.is_loaded():
         discord.opus.load_opus('opus')
-
         
 
 # f_music_title 함수
@@ -150,9 +180,7 @@ def load_chrome_driver():
 async def 도움말(ctx):
     embed = discord.Embed(title = "인정봇", description = "")
     embed.set_author(name = "ㅇㅈ#6079", icon_url = 'https://cdn.discordapp.com/avatars/270403684389748736/621692a4dddbf42dd2b01df1301eebe6.png')
-    embed.add_field(name = "사용 설명서", value = "- 인정-music 채널 가서  ✅ 누른 다음 제목만 적으세요 \n- 딜레이 심하니까 될때까지 기다렸다가 입력하세요 \n- ( 오류날 시 @ㅇㅈ#6079 ) \n- 다른 채널이나 채널 안들어가 있어도 노래 틀 수 있어요", inline = False)
-    embed.add_field(name = "이모지 사용법", value = "- (=join) (=resume) (=pause) (=stop) (=skip) \n- 이모지 한번 누르면 취소했다가 다시 눌러야 작동함", inline = False)
-    embed.add_field(name = "Command", value = "/join /leave /play (노래제목) /n (검색어) /g (검색어) \n/queuedel (숫자) /queue /queueclear \n/musicinfo /pause /resume /skip /stop \n/musicchannel /music_ch_video /music_ch_queue", inline = False)
+    embed.add_field(name = "명령어", value = "/join /leave /play (노래제목) /n (검색어) /g (검색어) \n/queuedel (숫자) /queue /queueclear \n/musicinfo /pause /resume /skip /stop \n/musicchannel /music_ch_video /music_ch_queue", inline = False)
     await ctx.send(embed=embed)
 
 
@@ -182,6 +210,7 @@ async def leave(ctx):
 # Command /play 노래제목
 @bot.command()
 async def play(ctx, *, msg):
+    
     try:
         global vc
         vc = await ctx.message.author.voice.channel.connect()
@@ -418,7 +447,7 @@ async def musicchannel(ctx, chname, msg):
                 await music_msg.edit(embed=embed_music_f)
 
 # 봇 전용 음악 채널 버튼 만들기
-@bot.event
+@bot.event()
 async def music_ch_video(reaction, user):
     
     if (reaction.emoji == '✅'):
@@ -502,7 +531,7 @@ async def n(ctx, *, keyword):
     driver.get("https://search.naver.com/search.naver?where=image&sm=tab_jum&query="+ keyword)
     driver.maximize_window()
     
-    imgs = driver.find_elements_by_tag_name('img')
+    imgs = driver.find_elements_by_tag_name('._image._listImage')
     
     links = []
     n = -1
@@ -544,7 +573,7 @@ async def g(ctx, *, keyword):
     driver.get("https://www.google.co.kr/search?q="+ keyword +"&source=lnms&tbm=isch&sa=X&ved=2ahUKEwjJ3uOx2JHwAhWMOpQKHQxdAI0Q_AUoAXoECAEQAw&biw=1920&bih=969")
     driver.maximize_window()
 
-    imgs = driver.find_elements_by_css_selector('img')
+    imgs = driver.find_elements_by_css_selector('.rg_i.Q4LuWd')
     
     links = []
     n = -1
@@ -666,6 +695,306 @@ async def create_channel(ctx, chname, msg):
     
     await channel.edit(category = category)
     await channel.edit(position = 100)
+
+# 알람 기능
+@bot.command(pass_context = True)
+async def 알람(ctx, a_time, msg):
+    await ctx.send(f"알람이 {a_time}초 후에 울립니다")
+    t = time.time()
+    while True:
+        if time.time() >= t + int(a_time):
+            await ctx.send(f"{ctx.message.author.mention} {msg}")
+            break
+        else:
+            pass
+        
+# 추가 기능
+@bot.command(pass_content = True)
+async def 하이빅스비(ctx):
+    await ctx.send(f"{ctx.message.author.mention} 네 주인님")
+
+
+# ㅅㄹ ㄱ 매크로
+txt = ["thffod.txt","gkdl.txt"]
+thffod = []
+gkdl = []
+for i in txt:
+    infile = open(i ,encoding='UTF8')
+    txt_file = infile.readlines()
+    infile.close()
+    for n in txt_file:
+        if txt_file[0].strip() == '<솔랭고파일>':
+            thffod.append(n.strip())
+        elif txt_file[0].strip() == '<하이파일>':
+            gkdl.append(n.strip())
+
+
+
+# 주식 기능
+stock_commands = [ '주식정보', '내자산', '자산목록', '등록', '매수', '매도' ]
+stock_player_id = []
+stock_player = []
+stock_money = []
+stock_name = [ '주식1', '주식2', '주식3', '주식4', '주식5', '주식6' ]
+stock_price_p = [ 100, 100, 100, 100, 100, 100 ]
+stock_price_c = [ 100, 100, 100, 100, 100, 100 ]
+
+
+@bot.command()
+async def 주식변동(ctx):
+    if ctx.message.author.id == administrator_id:
+        n = 0
+        for price in stock_price_c:
+            stock_price_p[n] = price
+            n += 1
+
+        n = 0
+        for price in stock_price_p:
+            if price-100 <= 0:
+                pr = random.randint(0, price+100 + 1)
+            else:
+                pr = random.randint(price-100, price+100 + 1)
+            stock_price_c[n] = pr
+            n += 1
+        print(stock_price_p)
+        print(stock_price_c)
+        await ctx.send('```주식의 가격이 변동되었습니다.```')
+
+@bot.command()
+async def 관리자(ctx):
+    if ctx.message.author.id == administrator_id:
+        await ctx.send('관리자 확인')
+
+@bot.command()
+async def 주식정보(ctx):
+    sn = ''
+    for n in range(len(stock_name)//2):
+        c1 = stock_price_c[n] - stock_price_p[n]
+        c2 = stock_price_c[n+3] - stock_price_p[n+3]
+        if c1 >= 0:
+            m1 = f'[ ▲  {str(stock_price_c[n] - stock_price_p[n])} ]'
+        else:
+            m1 = f'[ ▼ {str(stock_price_c[n] - stock_price_p[n])} ]'
+        if c2 >= 0:
+            m2 = f'[ ▲  {str(stock_price_c[n+3] - stock_price_p[n+3])} ]'
+        else:
+            m2 = f'[ ▼ {str(stock_price_c[n+3] - stock_price_p[n+3])} ]'
+
+        if stock_price_c[n] >= 100:
+            p1 = f'{stock_name[n]}:   {str(stock_price_c[n])}'
+        elif stock_price_c[n] >= 10:
+            p1 = f'{stock_name[n]}:    {str(stock_price_c[n])}'
+        else:
+            p1 = f'{stock_name[n]}:     {str(stock_price_c[n])}'
+        if stock_price_c[n+3] >= 100:
+            p2 = f'{stock_name[n+3]}:   {str(stock_price_c[n+3])}'
+        elif stock_price_c[n+3] >= 10:
+            p2 = f'{stock_name[n+3]}:    {str(stock_price_c[n+3])}'
+        else:
+            p2 = f'{stock_name[n+3]}:     {str(stock_price_c[n+3])}'
+        sn += f'{p1}\t{m1}\t\t{p2}\t{m2}\n'
+    embed = discord.Embed(title = f"```========================\t인정주식\t========================\n\n{sn}```", description = "")
+    embed.set_author(name = "   ㅇㅈ#6079", icon_url = 'https://cdn.discordapp.com/avatars/270403684389748736/621692a4dddbf42dd2b01df1301eebe6.png')
+    await ctx.send(embed=embed)
+        
+@bot.command()
+async def 주식시작(ctx):
+    while True:
+        t = time.time()
+        while True:
+            if time.time() >= t + 10:
+                await 주식변동(ctx)
+                await 주식정보(ctx)
+                break
+
+@bot.command()
+async def 주식초기화(ctx):
+    if ctx.message.author.id == administrator_id:
+        global stock_price_c
+        global stock_price_p
+        stock_price_p = [ 100, 100, 100, 100, 100, 100 ]
+        stock_price_c = [ 100, 100, 100, 100, 100, 100 ]
+
+@bot.command()
+async def 내자산(ctx):
+    for n in range(len(stock_player_id)):
+        if ctx.message.author.id == stock_player_id[n]:
+            await ctx.send(f'```{stock_player[n]}님의 자산 : {stock_money[n]}원```')
+            break
+
+@bot.command()
+async def 자산목록(ctx):
+    s = ''
+    for n in range(len(stock_player_id)):
+        s += f'```{stock_player[n]} : {stock_money[n]}원```' + '\n'
+
+    await ctx.send(f'{s}')
+
+@bot.command()
+async def 등록(ctx, member: discord.Member, msg):
+    n = 0
+    m = 0
+    if member in stock_player_id:
+        n += 1
+    else:
+        pass
+    if msg in stock_player:
+        m += 1
+    else:
+        pass
+    if n + m == 2:
+        await ctx.send('```이미 등록되어 있습니다.```')
+    elif n + m == 0:
+        stock_player_id.append(member.id)
+        stock_player.append(msg)
+        stock_money.append(500)
+        await ctx.send(f'```{msg}님, 등록 되었습니다.```')
+
+@bot.command()
+async def 매수(ctx, msg, num):
+    for n in range(len(stock_name)):
+        if msg == stock_name[n]:
+            for i in range(len(stock_player_id)):
+                if ctx.message.author.id == stock_player_id[i]:
+                    if stock_money[i] - stock_price_c[n] * int(num) >= 0:
+                        stock_money[i] -= stock_price_c[n] * int(num)
+                        await ctx.send(f'{stock_player[i]}님이 {stock_name[n]}을(를) {stock_price_c[n] * int(num)}원에 매수 하였습니다.')
+                        break
+                    else:
+                        await ctx.send(f'```{stock_player[i]}님의 자산이 부족합니다.```')
+                        break
+'''
+@bot.command()
+async def 매도(ctx, msg):   
+'''
+
+@bot.event
+async def on_message(msg):
+    global server_id
+    await comfirm_server_id(msg)
+
+    topic = msg.channel.topic
+
+    if msg.author.bot :
+        return None
+
+    if msg.content[0] == '`':
+        await bot.process_commands(msg)
+
+    else:
+        if server_id == 768734914949939210:
+            r = random.randint(0,1)
+            o = False
+            # 마법의 소라고동
+            if '?' in msg.content:
+                if '834693850538180618' in msg.content:
+                    if r == 1:
+                        await msg.channel.send('그 래.')
+                        o = True
+                    else:
+                        await msg.channel.send('안 돼.')
+                        o = True
+                        
+            if o == False:
+                # 솔랭 하이 매크로
+                if msg.content == '270403684389748736':
+                    await msg.channel.send('ㄴ')
+
+                for i in thffod:
+                    if i in msg.content:
+                        await msg.channel.send('ㄴ')
+                        break
+                for j in gkdl:
+                    if j in msg.content:
+                        await msg.channel.send('ㅂㅇ')
+                        break
+ 
+    if topic != None and '#인정_Music' in topic:
+        await play(bot, msg=msg.content)
+        await msg.delete()
+        
+        try:
+            embed_music = discord.Embed(title='인정 Music \n' + music_now[0], description='')
+            embed_music.set_image(url=music_thumbnail[0])
+            await music_msg.edit(embed=embed_music)
+                
+        except:
+            pass
+
+
+    # 주식 기능
+    elif topic is not None and '#인정주식' in ch_topic:
+
+        await msg.delete()
+
+        if msg.content == '내자산':
+            for n in range(len(stock_player_id)):
+                if msg.author.id == stock_player_id[n]:
+                    await msg.channel.send(f'```{stock_player[n]}님의 자산 : {stock_money[n]}원```')
+                    break
+
+        elif msg.content == '자산목록':
+            s = ''
+            for n in range(len(stock_player_id)):
+                s += f'```{stock_player[n]} : {stock_money[n]}원```' + '\n'
+                await msg.channel.send(f'{s}')
+
+        elif msg.content == '주식초기화':
+            if msg.author.id == administrator_id:
+                global stock_price_c
+                global stock_price_p
+                stock_price_p = [ 100, 100, 100, 100, 100, 100 ]
+                stock_price_c = [ 100, 100, 100, 100, 100, 100 ]
+
+        elif msg.content == '주식정보':
+            sn = ''
+            for n in range(len(stock_name)//2):
+                c1 = stock_price_c[n] - stock_price_p[n]
+                c2 = stock_price_c[n+3] - stock_price_p[n+3]
+                if c1 >= 0:
+                    m1 = f'[ ▲  {str(stock_price_c[n] - stock_price_p[n])} ]'
+                else:
+                    m1 = f'[ ▼ {str(stock_price_c[n] - stock_price_p[n])} ]'
+                if c2 >= 0:
+                    m2 = f'[ ▲  {str(stock_price_c[n+3] - stock_price_p[n+3])} ]'
+                else:
+                    m2 = f'[ ▼ {str(stock_price_c[n+3] - stock_price_p[n+3])} ]'
+
+                if stock_price_c[n] >= 100:
+                    p1 = f'{stock_name[n]}:   {str(stock_price_c[n])}'
+                elif stock_price_c[n] >= 10:
+                    p1 = f'{stock_name[n]}:    {str(stock_price_c[n])}'
+                else:
+                    p1 = f'{stock_name[n]}:     {str(stock_price_c[n])}'
+                if stock_price_c[n+3] >= 100:
+                    p2 = f'{stock_name[n+3]}:   {str(stock_price_c[n+3])}'
+                elif stock_price_c[n+3] >= 10:
+                    p2 = f'{stock_name[n+3]}:    {str(stock_price_c[n+3])}'
+                else:
+                    p2 = f'{stock_name[n+3]}:     {str(stock_price_c[n+3])}'
+                sn += f'{p1}\t{m1}\t\t{p2}\t{m2}\n'
+            embed = discord.Embed(title = f"```========================\t인정주식\t========================\n\n{sn}```", description = "")
+            embed.set_author(name = "   ㅇㅈ#6079", icon_url = 'https://cdn.discordapp.com/avatars/270403684389748736/621692a4dddbf42dd2b01df1301eebe6.png')
+            await msg.channel.send(embed=embed)
+
+        elif msg.content == '주식변동':
+            if msg.author.id == administrator_id:
+                n = 0
+                for price in stock_price_c:
+                    stock_price_p[n] = price
+                    n += 1
+
+                n = 0
+                for price in stock_price_p:
+                    if price-100 <= 0:
+                        pr = random.randint(0, price+100 + 1)
+                    else:
+                        pr = random.randint(price-100, price+100 + 1)
+                    stock_price_c[n] = pr
+                    n += 1
+                print(stock_price_p)
+                print(stock_price_c)
+                await msg.channel.send('```주식의 가격이 변동되었습니다.```')
 
     
 TOKEN = os.environ['BOT_TOKEN']
