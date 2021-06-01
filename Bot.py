@@ -448,10 +448,11 @@ async def musicchannel(ctx, chname, msg):
                 embed_music_f.set_image(url='https://i.ytimg.com/vi/1SLr62VBBjw/hq720.jpg?sqp=-oaymwEcCOgCEMoBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCbXp098HNZl_SbZ5Io5GuHd6M4CA')
                 await music_msg.edit(embed=embed_music_f)
 
+'''
 # 봇 전용 음악 채널 버튼 만들기
-@bot.event()
-async def music_ch_video(ctx, reaction):
-    
+@bot.command()
+async def on_reaction_add(reaction,user):
+
     if (reaction.emoji == '✅'):
         try:
             global vc
@@ -503,7 +504,7 @@ async def music_ch_video(ctx, reaction):
         if vc.is_playing():
             if len(music_user) >= 1:
                 vc.stop()
-
+'''
 # 봇 전용 음악 채널 노래 목록 만들기
 @bot.command(pass_context = True)
 async def music_ch_queue(ctx):
