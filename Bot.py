@@ -61,17 +61,17 @@ async def comfirm_server_id(ctx):
         print(music_var_num)
 
 # Event 디스코드 시작
-@bot.event()
+@bot.event
 async def on_ready():
     await bot.change_presence(status = discord.Status.online, activity = discord.Game('안녕'))
     print('Logging')
     print(bot.user.name)
     print('TOKEN =', TOKEN)
     print('Successly access')
-
+'''
     if not discord.opus.is_loaded():
         discord.opus.load_opus('opus')
-
+'''
 
         
 
@@ -649,33 +649,13 @@ async def dkssud(ctx, chname, msg):
     await dkssud.add_reaction('⏹')
     await dkssud.add_reaction('⏭')
 
-# 추가 기능
-@bot.command()
-async def j(ctx):
-    if ctx.message.author.voice and ctx.message.author.voice.channel:
-        try:
-            global ds
-            channel = ctx.message.author.voice.channel
-            ds = await channel.connect()
-        except:
-            await ds.move_to(ctx.author.voice.channel)
-    else:
-        await ctx.send("채널 연결좀")
-
-# 추가 기능
-@bot.command()
-async def l(ctx):
-    print(ctx.message.author.voice.channel)
-    print(bot.voice_clients)
-    await bot.voice_clients[0].disconnect()
-    print(bot.voice_clients)
 
 # 추가 기능
 @bot.command(pass_context = True)
-async def create_channel(ctx, chname, msg):
+async def create_channel(ctx, chname, msg, topic_msg):
 
     category = discord.utils.get(ctx.guild.channels, id=int(msg))
-    channel = await ctx.guild.create_text_channel(name = chname, topic = '인정')
+    channel = await ctx.guild.create_text_channel(name = chname, topic = topic_msg)
     
     await channel.edit(category = category)
     await channel.edit(position = 100)
@@ -698,10 +678,11 @@ async def 하이빅스비(ctx):
     await ctx.send(f"{ctx.message.author.mention} 네 주인님")
 
 
-# ㅅㄹ ㄱ 매크로
+
 # 헤로쿠용
 thffod = ['<솔랭고파일>', '솔랭', 'thffod', 'ㅅㄹ', 'tf', 'ㅅㄺ', '솔ㄹ랭', 'thfffod', '소랭', 'thfod', '설랭', 'tjffod', '듀오', 'ebdh', 'ㄷㅇ', '아이언', 'dkdldjs', '브론즈', 'qmfhswm', 'bronze', 'iron', 'duo', 'solo', 'rank', 'srg', 'SRG', 'thffh', 'fodzm', 'ソロ', 'ランク', '솔 랭']
 gkdl = ['<하이파일>', 'ㅎㅇ', 'gd', '하이', 'gkdl', 'ㅎ2', 'g2', 'hi', 'hello', '해위', '하위']
+
 
 
 
@@ -1018,7 +999,7 @@ async def on_message(msg):
 
     topic = msg.channel.topic
 
-    if msg.author.bot :
+    if msg.author.id == 834693850538180618:
         return None
 
     if msg.content[0] == '`':
