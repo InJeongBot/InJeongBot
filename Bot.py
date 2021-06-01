@@ -1080,7 +1080,7 @@ async def on_message(msg):
             await msg.channel.send(embed=embed)
 
         elif msg.content == '주식변동':
-            for admin_id in administarator_id:
+            for admin_id in administrator_id:
                 if msg.author.id == admin_id:
                     stock_change()
                     await msg.channel.send('```주가가 변동되었습니다.```')
