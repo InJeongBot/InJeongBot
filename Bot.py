@@ -868,6 +868,16 @@ async def 매수(ctx, msg, num):
 async def 매도(ctx, msg):   
 '''
 
+# 봇 전용 주식 채널 만들기
+@bot.command(pass_context = True)
+async def stockchannel(ctx, chname, msg):
+    category = discord.utils.get(ctx.guild.channels, id=int(msg))
+    channel = await ctx.guild.create_text_channel(name = chname, topic = '#인정주식')
+    
+    await channel.edit(category = category)
+    await channel.edit(position = 100)
+
+    
 @bot.event
 async def on_message(msg):
     global server_id
