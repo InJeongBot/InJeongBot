@@ -21,7 +21,7 @@ import random
 bot = commands.Bot(command_prefix = '`')
 client = discord.Client()
 
-administrator_id = 270403684389748736
+administrator_id = [ 270403684389748736, 849320491034476574]
 
 # 음악 목록
 music_user = []
@@ -61,17 +61,17 @@ async def comfirm_server_id(ctx):
         print(music_var_num)
 
 # Event 디스코드 시작
-@bot.event
+@bot.event()
 async def on_ready():
     await bot.change_presence(status = discord.Status.online, activity = discord.Game('안녕'))
     print('Logging')
     print(bot.user.name)
     print('TOKEN =', TOKEN)
     print('Successly access')
-'''
+
     if not discord.opus.is_loaded():
         discord.opus.load_opus('opus')
-'''
+
 
         
 
@@ -783,9 +783,10 @@ def stock_clear():
 
 @bot.command()
 async def 주식변동(ctx):
-    if ctx.message.author.id == administrator_id:
-        stock_change()
-        await ctx.send('```주식의 가격이 변동되었습니다.```')
+    for admin_id in administrator_id:
+        if ctx.message.author.id == admin_id:
+            stock_change()
+            await ctx.send('```주식의 가격이 변동되었습니다.```')
 
 @bot.command()
 async def 관리자(ctx):
@@ -1098,9 +1099,10 @@ async def on_message(msg):
             await msg.channel.send(embed=embed)
 
         elif msg.content == '주식변동':
-            if msg.author.id == administrator_id:
-                stock_change()
-                await msg.channel.send('```주가가 변동되었습니다.```')
+            for admin_id in administarator_id:
+                if msg.author.id == admin_id:
+                    stock_change()
+                    await msg.channel.send('```주가가 변동되었습니다.```')
 
         elif msg.content == '내주식':
             s = ''
@@ -1139,7 +1141,6 @@ async def on_message(msg):
             for i in range(len(stock_player_id)):
                 s += f'{stock_player[i]} : {debt[i]}' + '\n'
             await msg.channel.send(f'```{s}```')
-
 
     
 TOKEN = os.environ['BOT_TOKEN']
