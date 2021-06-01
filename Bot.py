@@ -650,6 +650,27 @@ async def dkssud(ctx, chname, msg):
     await dkssud.add_reaction('⏭')
 
 # 추가 기능
+@bot.command()
+async def j(ctx):
+    if ctx.message.author.voice and ctx.message.author.voice.channel:
+        try:
+            global ds
+            channel = ctx.message.author.voice.channel
+            ds = await channel.connect()
+        except:
+            await ds.move_to(ctx.author.voice.channel)
+    else:
+        await ctx.send("채널 연결좀")
+
+# 추가 기능
+@bot.command()
+async def l(ctx):
+    print(ctx.message.author.voice.channel)
+    print(bot.voice_clients)
+    await bot.voice_clients[0].disconnect()
+    print(bot.voice_clients)
+
+# 추가 기능
 @bot.command(pass_context = True)
 async def create_channel(ctx, chname, msg):
 
@@ -678,48 +699,46 @@ async def 하이빅스비(ctx):
 
 
 # ㅅㄹ ㄱ 매크로
+# 헤로쿠용
 thffod = ['<솔랭고파일>', '솔랭', 'thffod', 'ㅅㄹ', 'tf', 'ㅅㄺ', '솔ㄹ랭', 'thfffod', '소랭', 'thfod', '설랭', 'tjffod', '듀오', 'ebdh', 'ㄷㅇ', '아이언', 'dkdldjs', '브론즈', 'qmfhswm', 'bronze', 'iron', 'duo', 'solo', 'rank', 'srg', 'SRG', 'thffh', 'fodzm', 'ソロ', 'ランク', '솔 랭']
 gkdl = ['<하이파일>', 'ㅎㅇ', 'gd', '하이', 'gkdl', 'ㅎ2', 'g2', 'hi', 'hello', '해위', '하위']
 
 
 
 # 주식 기능
-stock_commands = [ '주식정보', '내자산', '자산목록', '등록', '매수', '매도' ]
-stock_player_id = []
-stock_player = []
-stock_money = []
+stock_commands = [ '등록 (@호출) (닉네임)', '주식정보', '내자산', '자산목록', '내주식', '주식목록', '매수 (주식이름) (갯수)', '매도 (주식이름) (갯수)', '돈보내기 (@호출) (긍맥)', '대출 (금액)', '빚청산 (금액)', '내빚', '빚목록']
+# parameter : i
+stock_player_id = [] 
+stock_player = [] 
+money = []
+start_price = 500
+stock_stocks = []
+debt = []
+# parameter : n
 stock_name = [ '주식1', '주식2', '주식3', '주식4', '주식5', '주식6' ]
 stock_price_p = [ 100, 100, 100, 100, 100, 100 ]
 stock_price_c = [ 100, 100, 100, 100, 100, 100 ]
 
+# 주식 변동 함수
+def stock_change():
+    n = 0
+    for price in stock_price_c:
+        stock_price_p[n] = price
+        n += 1
 
-@bot.command()
-async def 주식변동(ctx):
-    if ctx.message.author.id == administrator_id:
-        n = 0
-        for price in stock_price_c:
-            stock_price_p[n] = price
-            n += 1
+    n = 0
+    for price in stock_price_p:
+        if price-100 <= 0:
+            pr = random.randint(0, price+100 + 1)
+        else:
+            pr = random.randint(price-100, price+100 + 1)
+        stock_price_c[n] = pr
+        n += 1
+    print(stock_price_p)
+    print(stock_price_c)
 
-        n = 0
-        for price in stock_price_p:
-            if price-100 <= 0:
-                pr = random.randint(0, price+100 + 1)
-            else:
-                pr = random.randint(price-100, price+100 + 1)
-            stock_price_c[n] = pr
-            n += 1
-        print(stock_price_p)
-        print(stock_price_c)
-        await ctx.send('```주식의 가격이 변동되었습니다.```')
-
-@bot.command()
-async def 관리자(ctx):
-    if ctx.message.author.id == administrator_id:
-        await ctx.send('관리자 확인')
-
-@bot.command()
-async def 주식정보(ctx):
+# 주식정보 함수
+def stock_info():
     sn = ''
     for n in range(len(stock_name)//2):
         c1 = stock_price_c[n] - stock_price_p[n]
@@ -746,6 +765,36 @@ async def 주식정보(ctx):
         else:
             p2 = f'{stock_name[n+3]}:     {str(stock_price_c[n+3])}'
         sn += f'{p1}\t{m1}\t\t{p2}\t{m2}\n'
+
+    return sn
+
+
+# 주식 초기화
+def stock_clear():
+    global stock_player_id, stock_player, money, stock_stocks, debt, stock_name,stock_price_p, stock_price_c
+    stock_player_id = [] 
+    stock_player = [] 
+    money = []
+    stock_stocks = []
+    debt = []
+    stock_name = [ '주식1', '주식2', '주식3', '주식4', '주식5', '주식6' ]
+    stock_price_p = [ 100, 100, 100, 100, 100, 100 ]
+    stock_price_c = [ 100, 100, 100, 100, 100, 100 ]
+
+@bot.command()
+async def 주식변동(ctx):
+    if ctx.message.author.id == administrator_id:
+        stock_change()
+        await ctx.send('```주식의 가격이 변동되었습니다.```')
+
+@bot.command()
+async def 관리자(ctx):
+    if ctx.message.author.id == administrator_id:
+        await ctx.send('관리자 확인')
+
+@bot.command()
+async def 주식정보(ctx):
+    sn = stock_info()
     embed = discord.Embed(title = f"```========================\t인정주식\t========================\n\n{sn}```", description = "")
     embed.set_author(name = "   ㅇㅈ#6079", icon_url = 'https://cdn.discordapp.com/avatars/270403684389748736/621692a4dddbf42dd2b01df1301eebe6.png')
     await ctx.send(embed=embed)
@@ -763,28 +812,55 @@ async def 주식시작(ctx):
 @bot.command()
 async def 주식초기화(ctx):
     if ctx.message.author.id == administrator_id:
-        global stock_price_c
-        global stock_price_p
-        stock_price_p = [ 100, 100, 100, 100, 100, 100 ]
-        stock_price_c = [ 100, 100, 100, 100, 100, 100 ]
+        stock_clear()
+        await ctx.send('```주식의 가격이 초기화 되었습니다.```')
 
 @bot.command()
-async def 내자산(ctx):
+async def 내자산(ctx):  
     for n in range(len(stock_player_id)):
         if ctx.message.author.id == stock_player_id[n]:
-            await ctx.send(f'```{stock_player[n]}님의 자산 : {stock_money[n]}원```')
+            await ctx.send(f'```{stock_player[n]}님의 자산 : {money[n]}원```')
             break
 
 @bot.command()
 async def 자산목록(ctx):
     s = ''
     for n in range(len(stock_player_id)):
-        s += f'{stock_player[n]} : {stock_money[n]}원' + '\n'
+        s += f'{stock_player[n]} : {money[n]}원' + '\n'
+
+    await ctx.send(f'```{s}```')
+
+@bot.command()
+async def 내주식(ctx):
+    s = ''
+    for i in range(len(stock_player_id)):
+        if ctx.message.author.id == stock_player_id[i]:
+            for n in range(len(stock_name)):
+                if n == len(stock_name) - 1:
+                    s += f'{stock_name[n]} {stock_stocks[i][stock_name[n]]}개'
+                else:
+                    s += f'{stock_name[n]} {stock_stocks[i][stock_name[n]]}개, ' 
+            break
+
+    await ctx.send(f'```{stock_player[i]}님의 주식 : {s}```')
+
+@bot.command()
+async def 주식목록(ctx):
+    s = ''
+    for i in range(len(stock_player_id)):
+        s += f'{stock_player[i]} : '
+        for n in range(len(stock_name)):
+            if n == len(stock_name) - 1:
+                s += f'{stock_name[n]} {stock_stocks[i][stock_name[n]]}개'
+            else:
+                s += f'{stock_name[n]} {stock_stocks[i][stock_name[n]]}개, ' 
+        s += '\n'
 
     await ctx.send(f'```{s}```')
 
 @bot.command()
 async def 등록(ctx, member: discord.Member, msg):
+    global start_price
     n = 0
     m = 0
     if member.id in stock_player_id:
@@ -798,26 +874,131 @@ async def 등록(ctx, member: discord.Member, msg):
     elif n + m == 0:
         stock_player_id.append(member.id)
         stock_player.append(msg)
-        stock_money.append(500)
+        money.append(start_price)
+        debt.append(0)
+        a = {}
+        for n in range(len(stock_name)):
+            a[stock_name[n]] = 0
+        stock_stocks.append(a)
         await ctx.send(f'```{msg}님, 등록 되었습니다.```')
 
 @bot.command()
 async def 매수(ctx, msg, num):
-    for n in range(len(stock_name)):
-        if msg == stock_name[n]:
-            for i in range(len(stock_player_id)):
-                if ctx.message.author.id == stock_player_id[i]:
-                    if stock_money[i] - stock_price_c[n] * int(num) >= 0:
-                        stock_money[i] -= stock_price_c[n] * int(num)
-                        await ctx.send(f'{stock_player[i]}님이 {stock_name[n]}을(를) {stock_price_c[n] * int(num)}원에 매수 하였습니다.')
+    if int(num) > 0:
+        for n in range(len(stock_name)):
+            if msg == stock_name[n]:
+                for i in range(len(stock_player_id)):
+                    if ctx.message.author.id == stock_player_id[i]:
+                        if money[i] - stock_price_c[n] * int(num) >= 0:
+                            stock_stocks[i][stock_name[n]] += int(num)
+                            money[i] -= stock_price_c[n] * int(num)
+                            await ctx.send(f'```{stock_player[i]}님이 {stock_name[n]}을(를) {stock_price_c[n] * int(num)}원({int(num)}개)에 매수 하였습니다.```')
+                            break
+                        else:
+                            await ctx.send(f'```{stock_player[i]}님의 자산이 부족합니다.```')
+                            break
+    else:
+        await ctx.send(f'```최소 1개 이상 적어주세요.```')
+
+@bot.command()
+async def 매도(ctx, msg, num):
+    if int(num) > 0:
+        for n in range(len(stock_name)):
+            if msg == stock_name[n]:
+                for i in range(len(stock_player_id)):
+                    if ctx.message.author.id == stock_player_id[i]:
+                        if stock_stocks[i][stock_name[n]] - int(num) >= 0:
+                            stock_stocks[i][stock_name[n]] -= int(num)
+                            money[i] += stock_price_c[n] * int(num)
+                            await ctx.send(f'```{stock_player[i]}님이 {stock_name[n]}을(를) {stock_price_c[n] * int(num)}({int(num)}개)원에 매도 하였습니다.```')
+                            break
+                        else:
+                            await ctx.send(f'```현재 {stock_player[i]}님은 {stock_name[n]}을(를) {stock_stocks[i][stock_name[n]]}개 가지고 있습니다.```')
+                            break
+    else:
+        await ctx.send(f'```최소 1개 이상 적어주세요.```')
+
+@bot.command()
+async def 돈보내기(ctx, member: discord.Member, won):
+    if int(won) > 0:
+        for n in range(len(stock_player_id)):
+            if member.id == stock_player_id[n]:
+                for i in range(len(stock_player_id)):
+                    if ctx.message.author.id == stock_player_id[i]:
+                        if money[i] - int(won) >= 0:
+                            money[n] += int(won)
+                            money[i] -= int(won)
+                            await ctx.send(f'```{stock_player[i]}님이 {stock_player[n]}님에게 {int(won)}원을 보내주었습니다.```')
+                            break
+                        else:
+                            await ctx.send(f'```{stock_player[i]}님의 자산이 부족합니다.```')
+                            break
+    else:
+        await ctx.send(f'```최소 1원 이상 적어주세요.```')
+
+@bot.command()
+async def 주식양도(ctx, member: discord.Member, msg, num):
+    if int(num) > 0:
+        for n in range(len(stock_player_id)):
+            if member.id == stock_player_id[n]:
+                for i in range(len(stock_player_id)):
+                    if ctx.message.author.id == stock_player_id[i]:
+                        for r in range(len(stock_name)):
+                            if msg == stock_name[r]:
+                                if stock_stocks[i][stock_name[r]] - int(num) >= 0:
+                                    stock_stocks[i][stock_name[r]] -= int(num)
+                                    stock_stocks[n][stock_name[r]] += int(num)
+                                    await ctx.send(f'```{stock_player[i]}님이 {stock_player[n]}님에게 {stock_name[r]}을(를) {int(num)}개 양도해 주었습니다.```')
+                                    break
+                                else:
+                                    await ctx.send(f'```현재 {stock_player[i]}님은 {stock_name[r]}을(를) {stock_stocks[i][stock_name[r]]}개 가지고 있습니다.```')
+                                    break
+    else:
+        await ctx.send(f'```최소 1원 이상 적어주세요.```')
+
+@bot.command()
+async def 대출(ctx, won):
+    if int(won) > 0:
+        for i in range(len(stock_player_id)):
+            if ctx.message.author.id == stock_player_id[i]:
+                money[i] += int(won)
+                debt[i] += int(won)
+                await ctx.send(f'```{stock_player[i]}님이 {int(won)}원을 대출 받았습니다.```')
+                break
+    else:
+        await ctx.send(f'```최소 1원 이상 적어주세요.```')
+
+@bot.command()
+async def 빚청산(ctx, won):
+    if int(won) > 0:
+        for i in range(len(stock_player_id)):
+            if ctx.message.author.id == stock_player_id[i]:
+                if debt[i] > 0:
+                    if debt[i] - int(won) >= 0:
+                        money[i] -= int(won)
+                        debt[i] -= int(won)
+                        await ctx.send(f'```{stock_player[i]}님이 빚 {debt[i]+int(won)}원 중 {int(won)}원을 갚았습니다.```')
                         break
                     else:
-                        await ctx.send(f'```{stock_player[i]}님의 자산이 부족합니다.```')
-                        break
-'''
+                        await ctx.send(f'```{stock_player[i]}님의 대출 현황은 {debt[i]}원 입니다.```')
+                else:
+                    await ctx.send(f'```{stock_player[i]}님의 대출 현황은 {debt[i]}원 입니다.```')
+    else:
+        await ctx.send(f'```최소 1원 이상 적어주세요.```')
+
 @bot.command()
-async def 매도(ctx, msg):   
-'''
+async def 내빚(ctx):
+    for i in range(len(stock_player_id)):
+        if ctx.message.author.id == stock_player_id[i]:
+            await ctx.send(f'```{stock_player[i]}님의 빚 : {debt[i]}```')
+            break
+
+@bot.command()
+async def 빚목록(ctx):
+    s = '빚 목록\n'
+    for i in range(len(stock_player_id)):
+        s += f'{stock_player[i]} : {debt[i]}' + '\n'
+    await ctx.send(f'```{s}```')
 
 # 봇 전용 주식 채널 만들기
 @bot.command(pass_context = True)
@@ -887,75 +1068,78 @@ async def on_message(msg):
     elif topic is not None and '#인정주식' in topic:
 
         await msg.delete()
+        if msg.content == '도움말':
+            s = ''
+            for i in stock_commands:
+                s += i + '\n'
+            await msg.channel.send(f'```{s}```')
 
-        if msg.content == '내자산':
+        elif msg.content == '내자산':
             for n in range(len(stock_player_id)):
                 if msg.author.id == stock_player_id[n]:
-                    await msg.channel.send(f'```{stock_player[n]}님의 자산 : {stock_money[n]}원```')
+                    await msg.channel.send(f'```{stock_player[n]}님의 자산 : {money[n]}원```')
                     break
 
         elif msg.content == '자산목록':
             s = ''
             for n in range(len(stock_player_id)):
-                s += f'{stock_player[n]} : {stock_money[n]}원' + '\n'
+                s += f'{stock_player[n]} : {money[n]}원' + '\n'
             await msg.channel.send(f'```{s}```')
 
         elif msg.content == '주식초기화':
             if msg.author.id == administrator_id:
-                global stock_price_c
-                global stock_price_p
-                stock_price_p = [ 100, 100, 100, 100, 100, 100 ]
-                stock_price_c = [ 100, 100, 100, 100, 100, 100 ]
+                stock_clear()
+                await msg.channel.send('```주식의 가격이 초기화 되었습니다.```')
 
         elif msg.content == '주식정보':
-            sn = ''
-            for n in range(len(stock_name)//2):
-                c1 = stock_price_c[n] - stock_price_p[n]
-                c2 = stock_price_c[n+3] - stock_price_p[n+3]
-                if c1 >= 0:
-                    m1 = f'[ ▲  {str(stock_price_c[n] - stock_price_p[n])} ]'
-                else:
-                    m1 = f'[ ▼ {str(stock_price_c[n] - stock_price_p[n])} ]'
-                if c2 >= 0:
-                    m2 = f'[ ▲  {str(stock_price_c[n+3] - stock_price_p[n+3])} ]'
-                else:
-                    m2 = f'[ ▼ {str(stock_price_c[n+3] - stock_price_p[n+3])} ]'
-
-                if stock_price_c[n] >= 100:
-                    p1 = f'{stock_name[n]}:   {str(stock_price_c[n])}'
-                elif stock_price_c[n] >= 10:
-                    p1 = f'{stock_name[n]}:    {str(stock_price_c[n])}'
-                else:
-                    p1 = f'{stock_name[n]}:     {str(stock_price_c[n])}'
-                if stock_price_c[n+3] >= 100:
-                    p2 = f'{stock_name[n+3]}:   {str(stock_price_c[n+3])}'
-                elif stock_price_c[n+3] >= 10:
-                    p2 = f'{stock_name[n+3]}:    {str(stock_price_c[n+3])}'
-                else:
-                    p2 = f'{stock_name[n+3]}:     {str(stock_price_c[n+3])}'
-                sn += f'{p1}\t{m1}\t\t{p2}\t{m2}\n'
+            sn = stock_info()
             embed = discord.Embed(title = f"```========================\t인정주식\t========================\n\n{sn}```", description = "")
             embed.set_author(name = "   ㅇㅈ#6079", icon_url = 'https://cdn.discordapp.com/avatars/270403684389748736/621692a4dddbf42dd2b01df1301eebe6.png')
             await msg.channel.send(embed=embed)
 
         elif msg.content == '주식변동':
             if msg.author.id == administrator_id:
-                n = 0
-                for price in stock_price_c:
-                    stock_price_p[n] = price
-                    n += 1
-
-                n = 0
-                for price in stock_price_p:
-                    if price-100 <= 0:
-                        pr = random.randint(0, price+100 + 1)
-                    else:
-                        pr = random.randint(price-100, price+100 + 1)
-                    stock_price_c[n] = pr
-                    n += 1
-                print(stock_price_p)
-                print(stock_price_c)
+                stock_change()
                 await msg.channel.send('```주가가 변동되었습니다.```')
+
+        elif msg.content == '내주식':
+            s = ''
+            for i in range(len(stock_player_id)):
+                if msg.author.id == stock_player_id[i]:
+                    for n in range(len(stock_name)):
+                        if n == len(stock_name) - 1:
+                            s += f'{stock_name[n]} {stock_stocks[i][stock_name[n]]}개'
+                        else:
+                            s += f'{stock_name[n]} {stock_stocks[i][stock_name[n]]}개, ' 
+                    break
+
+            await msg.channel.send(f'```{stock_player[i]}님의 주식 : {s}```')
+        
+        elif msg.content == '주식목록':
+            s = ''
+            for i in range(len(stock_player_id)):
+                s += f'{stock_player[i]} : '
+                for n in range(len(stock_name)):
+                    if n == len(stock_name) - 1:
+                        s += f'{stock_name[n]} {stock_stocks[i][stock_name[n]]}개'
+                    else:
+                        s += f'{stock_name[n]} {stock_stocks[i][stock_name[n]]}개, ' 
+                s += '\n'
+
+            await msg.channel.send(f'```{s}```')
+
+        elif msg.content == '내빚':
+            for i in range(len(stock_player_id)):
+                if msg.author.id == stock_player_id[i]:
+                    await msg.channel.send(f'```{stock_player[i]}님의 빚 : {debt[i]}```')
+                    break
+
+        elif msg.content == '빚목록':
+            s = '빚 목록\n'
+            for i in range(len(stock_player_id)):
+                s += f'{stock_player[i]} : {debt[i]}' + '\n'
+            await msg.channel.send(f'```{s}```')
+
 
     
 TOKEN = os.environ['BOT_TOKEN']
