@@ -68,10 +68,10 @@ async def on_ready():
     print(bot.user.name)
     print('TOKEN =', TOKEN)
     print('Successly access')
-
+'''
     if not discord.opus.is_loaded():
         discord.opus.load_opus('opus')
-
+'''
 
         
 
@@ -650,7 +650,6 @@ async def dkssud(ctx, chname, msg):
     await dkssud.add_reaction('⏭')
 
 
-
 # 추가 기능
 @bot.command(pass_context = True)
 async def create_channel(ctx, chname, msg, topic_msg):
@@ -680,6 +679,7 @@ async def 하이빅스비(ctx):
 
 
 # ㅅㄹ ㄱ 매크로
+
 # 헤로쿠용
 thffod = ['<솔랭고파일>', '솔랭', 'thffod', 'ㅅㄹ', 'tf', 'ㅅㄺ', '솔ㄹ랭', 'thfffod', '소랭', 'thfod', '설랭', 'tjffod', '듀오', 'ebdh', 'ㄷㅇ', '아이언', 'dkdldjs', '브론즈', 'qmfhswm', 'bronze', 'iron', 'duo', 'solo', 'rank', 'srg', 'SRG', 'thffh', 'fodzm', 'ソロ', 'ランク', '솔 랭']
 gkdl = ['<하이파일>', 'ㅎㅇ', 'gd', '하이', 'gkdl', 'ㅎ2', 'g2', 'hi', 'hello', '해위', '하위']
@@ -700,6 +700,26 @@ stock_name = [ '주식1', '주식2', '주식3', '주식4', '주식5', '주식6' 
 stock_price_p = [ 100, 100, 100, 100, 100, 100 ]
 stock_price_c = [ 100, 100, 100, 100, 100, 100 ]
 
+# 상장 폐지 (상폐)
+delisting = 30
+delisting_check = False
+delisting_list = []
+
+
+# 주식 상폐 여부 함수
+def stock_delisting_check():
+    global delisting_check
+    delisting_check = False
+    delisting_check = []
+    n = 0
+    for price in stock_price_c:
+        if price <= delisting:
+            price = 100
+            stock_price_c[n] = price
+            delisting_list.append(stock_name[n])
+            delisting_check = True
+        n += 1
+
 # 주식 변동 함수
 def stock_change():
     n = 0
@@ -709,12 +729,13 @@ def stock_change():
 
     n = 0
     for price in stock_price_p:
-        if price-100 <= 0:
-            pr = random.randint(0, price+100 + 1)
-        else:
+        if price > 100:
             pr = random.randint(price-100, price+100 + 1)
+        else:
+            pr = random.randint(0, price+100 + 1)
         stock_price_c[n] = pr
         n += 1
+
     print(stock_price_p)
     print(stock_price_c)
 
@@ -764,10 +785,19 @@ def stock_clear():
 
 @bot.command()
 async def 주식변동(ctx):
+    s = ''
     for admin_id in administrator_id:
         if ctx.message.author.id == admin_id:
             stock_change()
+            stock_delisting_check()
             await ctx.send('```주식의 가격이 변동되었습니다.```')
+            if delisting_check:
+                for i in range(len(delisting_list)):
+                    if i != len(delisting_list):
+                        s += delisting_list[i] + '와(과)'
+                    else:
+                        s += delisting_list[i] + '이(가)'
+                await ctx.send(f'주가가 30이하로 떨어져 {s} 상장 폐지 되었습니다.')
 
 @bot.command()
 async def 관리자(ctx):
@@ -937,7 +967,7 @@ async def 주식양도(ctx, member: discord.Member, msg, num):
                                     break
     else:
         await ctx.send(f'```최소 1개 이상 적어주세요.```')
-'''
+
 @bot.command()
 async def 대출(ctx, won):
     if int(won) > 0:
@@ -949,7 +979,7 @@ async def 대출(ctx, won):
                 break
     else:
         await ctx.send(f'```최소 1원 이상 적어주세요.```')
-'''
+
 @bot.command()
 async def 빚청산(ctx, won):
     if int(won) > 0:
