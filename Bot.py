@@ -21,7 +21,7 @@ import random
 bot = commands.Bot(command_prefix = '`')
 client = discord.Client()
 
-administrator_id = [ 270403684389748736, 849320491034476574]
+administrator_id = [ 270403684389748736, 849320491034476574 ]
 
 # 음악 목록
 music_user = []
@@ -68,10 +68,10 @@ async def on_ready():
     print(bot.user.name)
     print('TOKEN =', TOKEN)
     print('Successly access')
-'''
+
     if not discord.opus.is_loaded():
         discord.opus.load_opus('opus')
-'''
+
 
         
 
@@ -650,6 +650,7 @@ async def dkssud(ctx, chname, msg):
     await dkssud.add_reaction('⏭')
 
 
+
 # 추가 기능
 @bot.command(pass_context = True)
 async def create_channel(ctx, chname, msg, topic_msg):
@@ -678,21 +679,20 @@ async def 하이빅스비(ctx):
     await ctx.send(f"{ctx.message.author.mention} 네 주인님")
 
 
-
+# ㅅㄹ ㄱ 매크로
 # 헤로쿠용
 thffod = ['<솔랭고파일>', '솔랭', 'thffod', 'ㅅㄹ', 'tf', 'ㅅㄺ', '솔ㄹ랭', 'thfffod', '소랭', 'thfod', '설랭', 'tjffod', '듀오', 'ebdh', 'ㄷㅇ', '아이언', 'dkdldjs', '브론즈', 'qmfhswm', 'bronze', 'iron', 'duo', 'solo', 'rank', 'srg', 'SRG', 'thffh', 'fodzm', 'ソロ', 'ランク', '솔 랭']
 gkdl = ['<하이파일>', 'ㅎㅇ', 'gd', '하이', 'gkdl', 'ㅎ2', 'g2', 'hi', 'hello', '해위', '하위']
 
 
 
-
 # 주식 기능
-stock_commands = [ '등록 (@호출) (닉네임)', '주식정보', '내자산', '자산목록', '내주식', '주식목록', '매수 (주식이름) (갯수)', '매도 (주식이름) (갯수)', '돈보내기 (@호출) (긍맥)', '대출 (금액)', '빚청산 (금액)', '내빚', '빚목록']
+stock_commands = [ '등록 (@호출) (닉네임)', '주식정보', '내자산', '자산목록', '내주식', '주식목록', '매수 (주식이름) (갯수)', '매도 (주식이름) (갯수)', '돈보내기 (@호출) (긍맥)', '주식양도 (@호출) (주식이름) (갯수)', '대출 (금액)', '빚청산 (금액)', '내빚', '빚목록']
 # parameter : i
 stock_player_id = [] 
 stock_player = [] 
 money = []
-start_price = 500
+start_price = 5000
 stock_stocks = []
 debt = []
 # parameter : n
@@ -892,7 +892,7 @@ async def 매도(ctx, msg, num):
                         if stock_stocks[i][stock_name[n]] - int(num) >= 0:
                             stock_stocks[i][stock_name[n]] -= int(num)
                             money[i] += stock_price_c[n] * int(num)
-                            await ctx.send(f'```{stock_player[i]}님이 {stock_name[n]}을(를) {stock_price_c[n] * int(num)}({int(num)}개)원에 매도 하였습니다.```')
+                            await ctx.send(f'```{stock_player[i]}님이 {stock_name[n]}을(를) {stock_price_c[n] * int(num)}원({int(num)}개)에 매도 하였습니다.```')
                             break
                         else:
                             await ctx.send(f'```현재 {stock_player[i]}님은 {stock_name[n]}을(를) {stock_stocks[i][stock_name[n]]}개 가지고 있습니다.```')
@@ -936,8 +936,8 @@ async def 주식양도(ctx, member: discord.Member, msg, num):
                                     await ctx.send(f'```현재 {stock_player[i]}님은 {stock_name[r]}을(를) {stock_stocks[i][stock_name[r]]}개 가지고 있습니다.```')
                                     break
     else:
-        await ctx.send(f'```최소 1원 이상 적어주세요.```')
-
+        await ctx.send(f'```최소 1개 이상 적어주세요.```')
+'''
 @bot.command()
 async def 대출(ctx, won):
     if int(won) > 0:
@@ -949,7 +949,7 @@ async def 대출(ctx, won):
                 break
     else:
         await ctx.send(f'```최소 1원 이상 적어주세요.```')
-
+'''
 @bot.command()
 async def 빚청산(ctx, won):
     if int(won) > 0:
@@ -972,14 +972,14 @@ async def 빚청산(ctx, won):
 async def 내빚(ctx):
     for i in range(len(stock_player_id)):
         if ctx.message.author.id == stock_player_id[i]:
-            await ctx.send(f'```{stock_player[i]}님의 빚 : {debt[i]}```')
+            await ctx.send(f'```{stock_player[i]}님의 빚 : {debt[i]}원```')
             break
 
 @bot.command()
 async def 빚목록(ctx):
     s = '빚 목록\n'
     for i in range(len(stock_player_id)):
-        s += f'{stock_player[i]} : {debt[i]}' + '\n'
+        s += f'{stock_player[i]} : {debt[i]}원' + '\n'
     await ctx.send(f'```{s}```')
 
 # 봇 전용 주식 채널 만들기
@@ -1122,6 +1122,7 @@ async def on_message(msg):
             for i in range(len(stock_player_id)):
                 s += f'{stock_player[i]} : {debt[i]}' + '\n'
             await msg.channel.send(f'```{s}```')
+
 
     
 TOKEN = os.environ['BOT_TOKEN']
