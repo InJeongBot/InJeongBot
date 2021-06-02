@@ -18,7 +18,7 @@ import os
 import random
 
 
-bot = commands.Bot(command_prefix = '`')
+bot = commands.Bot(command_prefix = '-')
 client = discord.Client()
 
 administrator_id = [ 270403684389748736, 849320491034476574 ]
@@ -68,10 +68,10 @@ async def on_ready():
     print(bot.user.name)
     print('TOKEN =', TOKEN)
     print('Successly access')
-'''
+
     if not discord.opus.is_loaded():
         discord.opus.load_opus('opus')
-'''
+
 
         
 
@@ -685,7 +685,6 @@ thffod = ['<솔랭고파일>', '솔랭', 'thffod', 'ㅅㄹ', 'tf', 'ㅅㄺ', '�
 gkdl = ['<하이파일>', 'ㅎㅇ', 'gd', '하이', 'gkdl', 'ㅎ2', 'g2', 'hi', 'hello', '해위', '하위']
 
 
-
 # 주식 기능
 stock_commands = [ '등록 (@호출) (닉네임)', '주식정보', '내자산', '자산목록', '내주식', '주식목록', '매수 (주식이름) (갯수)', '매도 (주식이름) (갯수)', '돈보내기 (@호출) (긍맥)', '주식양도 (@호출) (주식이름) (갯수)', '대출 (금액)', '빚청산 (금액)', '내빚', '빚목록']
 # parameter : i
@@ -742,31 +741,36 @@ def stock_change():
 # 주식정보 함수
 def stock_info():
     sn = ''
-    for n in range(len(stock_name)//2):
+    m = 0
+    for n in range(len(stock_name)):
         c1 = stock_price_c[n] - stock_price_p[n]
-        c2 = stock_price_c[n+3] - stock_price_p[n+3]
         if c1 >= 0:
-            m1 = f'[ ▲  {str(stock_price_c[n] - stock_price_p[n])} ]'
+            if len(c1) == 1:
+                m1 = f'[ ▲    {str(c1)} ]'
+            elif len(c1) == 2:
+                m1 = f'[ ▲   {str(c1)} ]'
+            elif len(c1) == 3:
+                m1 = f'[ ▲  {str(c1)} ]'
         else:
-            m1 = f'[ ▼ {str(stock_price_c[n] - stock_price_p[n])} ]'
-        if c2 >= 0:
-            m2 = f'[ ▲  {str(stock_price_c[n+3] - stock_price_p[n+3])} ]'
-        else:
-            m2 = f'[ ▼ {str(stock_price_c[n+3] - stock_price_p[n+3])} ]'
+            if len(c1) == 2:
+                m1 = f'[ ▼   {str(c1)} ]'
+            if len(c1) == 3:
+                m1 = f'[ ▼  {str(c1)} ]'
+            if len(c1) == 4:
+                m1 = f'[ ▼ {str(c1)} ]'
 
-        if stock_price_c[n] >= 100:
+        if stock_price_c[n] >= 1000:
+            p1 = f'{stock_name[n]}:  {str(stock_price_c[n])}'
+        elif stock_price_c[n] >= 100:
             p1 = f'{stock_name[n]}:   {str(stock_price_c[n])}'
         elif stock_price_c[n] >= 10:
             p1 = f'{stock_name[n]}:    {str(stock_price_c[n])}'
         else:
             p1 = f'{stock_name[n]}:     {str(stock_price_c[n])}'
-        if stock_price_c[n+3] >= 100:
-            p2 = f'{stock_name[n+3]}:   {str(stock_price_c[n+3])}'
-        elif stock_price_c[n+3] >= 10:
-            p2 = f'{stock_name[n+3]}:    {str(stock_price_c[n+3])}'
-        else:
-            p2 = f'{stock_name[n+3]}:     {str(stock_price_c[n+3])}'
-        sn += f'{p1}\t{m1}\t\t{p2}\t{m2}\n'
+
+        if n % 2 == 1:
+            sn += '\t\t{p1}\t{m1}\n'
+        else: sn += '{p1}\t{m1}'
 
     return sn
 
@@ -1152,6 +1156,7 @@ async def on_message(msg):
             for i in range(len(stock_player_id)):
                 s += f'{stock_player[i]} : {debt[i]}' + '\n'
             await msg.channel.send(f'```{s}```')
+
 
 
     
