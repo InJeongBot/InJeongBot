@@ -18,7 +18,8 @@ import os
 import random
 
 
-bot = commands.Bot(command_prefix = '-')
+command_prefix = '-'
+bot = commands.Bot(command_prefix = command_prefix)
 client = discord.Client()
 
 administrator_id = [ 270403684389748736, 849320491034476574 ]
@@ -679,10 +680,10 @@ async def 하이빅스비(ctx):
 
 
 # ㅅㄹ ㄱ 매크로
-
 # 헤로쿠용
 thffod = ['<솔랭고파일>', '솔랭', 'thffod', 'ㅅㄹ', 'tf', 'ㅅㄺ', '솔ㄹ랭', 'thfffod', '소랭', 'thfod', '설랭', 'tjffod', '듀오', 'ebdh', 'ㄷㅇ', '아이언', 'dkdldjs', '브론즈', 'qmfhswm', 'bronze', 'iron', 'duo', 'solo', 'rank', 'srg', 'SRG', 'thffh', 'fodzm', 'ソロ', 'ランク', '솔 랭']
 gkdl = ['<하이파일>', 'ㅎㅇ', 'gd', '하이', 'gkdl', 'ㅎ2', 'g2', 'hi', 'hello', '해위', '하위']
+
 
 
 # 주식 기능
@@ -701,22 +702,21 @@ stock_price_c = [ 100, 100, 100, 100, 100, 100 ]
 
 # 상장 폐지 (상폐)
 delisting = 30
-delisting_check = False
 delisting_list = []
 
 
 # 주식 상폐 여부 함수
 def stock_delisting_check():
-    global delisting_check
-    delisting_check = False
-    delisting_check = []
+    global delisting_list
+    delisting_list = []
     n = 0
     for price in stock_price_c:
         if price <= delisting:
             price = 100
             stock_price_c[n] = price
             delisting_list.append(stock_name[n])
-            delisting_check = True
+            for i in range(len(stock_player_id)):
+                stock_stocks[i][stock_name[n]] = 0
         n += 1
 
 # 주식 변동 함수
@@ -737,7 +737,6 @@ def stock_change():
 
     print(stock_price_p)
     print(stock_price_c)
-
 
 # 주식정보 함수
 def stock_info():
@@ -775,7 +774,6 @@ def stock_info():
     return sn
 
 
-
 # 주식 초기화
 def stock_clear():
     global stock_player_id, stock_player, money, stock_stocks, debt, stock_name,stock_price_p, stock_price_c
@@ -790,19 +788,11 @@ def stock_clear():
 
 @bot.command()
 async def 주식변동(ctx):
-    s = ''
     for admin_id in administrator_id:
         if ctx.message.author.id == admin_id:
             stock_change()
             stock_delisting_check()
-            await ctx.send('```주식의 가격이 변동되었습니다.```')
-            if delisting_check:
-                for i in range(len(delisting_list)):
-                    if i != len(delisting_list):
-                        s += delisting_list[i] + '와(과)'
-                    else:
-                        s += delisting_list[i] + '이(가)'
-                await ctx.send(f'주가가 30이하로 떨어져 {s} 상장 폐지 되었습니다.')
+            await ctx.send('```주가가 변동되었습니다.```')
 
 @bot.command()
 async def 관리자(ctx):
@@ -811,10 +801,18 @@ async def 관리자(ctx):
 
 @bot.command()
 async def 주식정보(ctx):
+    s = ''
     sn = stock_info()
     embed = discord.Embed(title = f"```========================\t인정주식\t========================\n\n{sn}```", description = "")
     embed.set_author(name = "   ㅇㅈ#6079", icon_url = 'https://cdn.discordapp.com/avatars/270403684389748736/621692a4dddbf42dd2b01df1301eebe6.png')
     await ctx.send(embed=embed)
+    if len(delisting_list) != 0:
+        for i in range(len(delisting_list)):
+            if i != len(delisting_list) - 1:
+                s += delisting_list[i] + '와(과) '
+            else:
+                s += delisting_list[i] + '이(가)'
+        await ctx.send(f'```주가가 30 이하로 떨어져 {s} 상장 폐지 되었습니다.```')
         
 @bot.command()
 async def 주식시작(ctx):
@@ -1037,7 +1035,7 @@ async def on_message(msg):
     if msg.author.id == 834693850538180618:
         return None
 
-    if msg.content[0] == '-':
+    if msg.content[:1] == command_prefix:
         await bot.process_commands(msg)
 
     else:
@@ -1109,15 +1107,24 @@ async def on_message(msg):
                 await msg.channel.send('```주식의 가격이 초기화 되었습니다.```')
 
         elif msg.content == '주식정보':
+            s = ''
             sn = stock_info()
             embed = discord.Embed(title = f"```========================\t인정주식\t========================\n\n{sn}```", description = "")
             embed.set_author(name = "   ㅇㅈ#6079", icon_url = 'https://cdn.discordapp.com/avatars/270403684389748736/621692a4dddbf42dd2b01df1301eebe6.png')
             await msg.channel.send(embed=embed)
+            if len(delisting_list) != 0:
+                for i in range(len(delisting_list)):
+                    if i != len(delisting_list) - 1:
+                        s += delisting_list[i] + '와(과) '
+                    else:
+                        s += delisting_list[i] + '이(가)'
+                await msg.channel.send(f'```주가가 30이하로 떨어져 {s} 상장 폐지 되었습니다.```')
 
         elif msg.content == '주식변동':
             for admin_id in administrator_id:
                 if msg.author.id == admin_id:
                     stock_change()
+                    stock_delisting_check()
                     await msg.channel.send('```주가가 변동되었습니다.```')
 
         elif msg.content == '내주식':
@@ -1159,7 +1166,5 @@ async def on_message(msg):
             await msg.channel.send(f'```{s}```')
 
 
-
-    
 TOKEN = os.environ['BOT_TOKEN']
 bot.run(TOKEN)
