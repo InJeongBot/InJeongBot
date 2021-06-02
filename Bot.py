@@ -1036,7 +1036,7 @@ async def on_message(msg):
     if msg.author.id == 834693850538180618:
         return None
 
-    if msg.content[0] == '`':
+    if msg.content[0] == '-':
         await bot.process_commands(msg)
 
     else:
