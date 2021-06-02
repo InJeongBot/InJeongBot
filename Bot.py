@@ -738,12 +738,13 @@ def stock_change():
     print(stock_price_p)
     print(stock_price_c)
 
+
 # 주식정보 함수
 def stock_info():
     sn = ''
     for n in range(len(stock_name)):
         c1 = str(stock_price_c[n] - stock_price_p[n])
-        if c1 >= 0:
+        if int(c1) >= 0:
             if len(c1) == 1:
                 m1 = f'[ ▲    {c1} ]'
             elif len(c1) == 2:
@@ -768,10 +769,11 @@ def stock_info():
             p1 = f'{stock_name[n]}:     {str(stock_price_c[n])}'
 
         if n % 2 == 1:
-            sn += '\t\t{p1}\t{m1}\n'
-        else: sn += '{p1}\t{m1}'
+            sn += f'\t\t{p1}\t{m1}\n'
+        else: sn += f'{p1}\t{m1}'
 
     return sn
+
 
 
 # 주식 초기화
