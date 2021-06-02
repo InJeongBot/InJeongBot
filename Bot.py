@@ -741,23 +741,22 @@ def stock_change():
 # 주식정보 함수
 def stock_info():
     sn = ''
-    m = 0
     for n in range(len(stock_name)):
-        c1 = stock_price_c[n] - stock_price_p[n]
+        c1 = str(stock_price_c[n] - stock_price_p[n])
         if c1 >= 0:
             if len(c1) == 1:
-                m1 = f'[ ▲    {str(c1)} ]'
+                m1 = f'[ ▲    {c1} ]'
             elif len(c1) == 2:
-                m1 = f'[ ▲   {str(c1)} ]'
+                m1 = f'[ ▲   {c1} ]'
             elif len(c1) == 3:
-                m1 = f'[ ▲  {str(c1)} ]'
+                m1 = f'[ ▲  {c1} ]'
         else:
             if len(c1) == 2:
-                m1 = f'[ ▼   {str(c1)} ]'
+                m1 = f'[ ▼   {c1} ]'
             if len(c1) == 3:
-                m1 = f'[ ▼  {str(c1)} ]'
+                m1 = f'[ ▼  {c1} ]'
             if len(c1) == 4:
-                m1 = f'[ ▼ {str(c1)} ]'
+                m1 = f'[ ▼ {c1} ]'
 
         if stock_price_c[n] >= 1000:
             p1 = f'{stock_name[n]}:  {str(stock_price_c[n])}'
