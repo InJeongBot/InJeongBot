@@ -718,8 +718,8 @@ async def 주식관리(ctx, msg_command, name, num = 0):
                         if name == stock_name[i]:
                             stock_price_c[i] = int(num)
                             stock_price_p[i] = int(num)
-                        await ctx.send(f'```{name}의 주가가 {int(num)}원으로 변경되었습니다.```')
-                        break
+                            await ctx.send(f'```{name}의 주가가 {int(num)}원으로 변경되었습니다.```')
+                            break
                 else:
                     await ctx.send(f'```현재 주식정보에 {name}은(는) 존재하지 않습니다.```')
             else:
