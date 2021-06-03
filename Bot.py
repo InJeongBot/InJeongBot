@@ -69,10 +69,10 @@ async def on_ready():
     print(bot.user.name)
     print('TOKEN =', TOKEN)
     print('Successly access')
-'''
+
     if not discord.opus.is_loaded():
         discord.opus.load_opus('opus')
-'''
+
 
         
 
@@ -233,7 +233,10 @@ async def play(ctx, *, msg):
         FFMPEG_OPTIONS = {'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5', 'options': '-vn'}
         
         driver = load_chrome_driver()
-        driver.get("https://www.youtube.com/results?search_query="+msg)
+        if msg[:5] in 'https://www.youtube.com/results?search_query=':
+            driver.get(msg)
+        else:
+            driver.get("https://www.youtube.com/results?search_query="+msg)
         source = driver.page_source
         bs = bs4.BeautifulSoup(source, 'lxml')
         entire = bs.find_all('a', {'id': 'video-title'})
@@ -685,7 +688,6 @@ thffod = ['<솔랭고파일>', '솔랭', 'thffod', 'ㅅㄹ', 'tf', 'ㅅㄺ', '�
 gkdl = ['<하이파일>', 'ㅎㅇ', 'gd', '하이', 'gkdl', 'ㅎ2', 'g2', 'hi', 'hello', '해위', '하위']
 
 
-
 # 주식 기능
 stock_commands = [ '등록 (@호출) (닉네임)', '주식정보', '내자산', '자산목록', '내주식', '주식목록', '매수 (주식이름) (갯수)', '매도 (주식이름) (갯수)', '돈보내기 (@호출) (긍맥)', '주식양도 (@호출) (주식이름) (갯수)', '대출 (금액)', '빚청산 (금액)', '내빚', '빚목록']
 # parameter : i
@@ -704,11 +706,86 @@ stock_price_c = [ 100, 100, 100, 100, 100, 100 ]
 delisting = 30
 delisting_list = []
 
+@bot.command()
+async def 주식관리(ctx, msg_command, name, **num):
+    if ctx.message.author.id in administrator_id:
+
+        if msg_command == "가격수정":
+            if int(num) > 0:
+                if name in stock_name:
+                    for i in range(len(stock_name)):
+                        if name == stock_name[i]:
+                            stock_price_c[i] = int(num)
+                            stock_price_p[i] = int(num)
+                        await ctx.send(f'```{name}의 주가가 {int(num)}원으로 변경되었습니다.```')
+                        break
+                else:
+                    await ctx.send(f'```현재 주식정보에 {name}은(는) 존재하지 않습니다.```')
+            else:
+                await ctx.send(f'```최소 1원 이상 적어주세요.```')
+
+        elif msg_command =='추가':
+            if int(num) > 0:
+                stock_name.append(name)
+                stock_price_c.append(int(num))
+                stock_price_p.append(int(num))
+                for i in range(len(stock_stocks)):
+                    stock_stocks[i][name] = 0
+                await ctx.send(f'```{name}이(가) {int(num)}원의 주가로 추가되었습니다.```')
+            else:
+                await ctx.send(f'```최소 1원 이상 적어주세요.```')
+
+        elif msg_command == '삭제':
+            if name in stock_name:
+                for i in range(len(stock_name)):
+                    if name == stock_name[i]:
+                        del stock_name[i]
+                        del stock_price_c[i]
+                        del stock_price_p[i]
+                        for i in range(len(stock_stocks)):
+                            del stock_stocks[name]
+                        await ctx.send(f'```{name}이(가) 삭제되었습니다.```')
+                        break
+            else:
+                await ctx.send(f'```현재 주식정보에 {name}은(는) 존재하지 않습니다.```')
+        
+
+
+@bot.command()
+async def 자산관리(ctx, member: discord.Member, num):
+    if ctx.message.author.id in administrator_id:
+        if int(num) > 0:
+            if member.id in stock_player_id:
+                for i in range(len(stock_player_id)):
+                    if member.id == stock_player_id[i]:
+                        money[i] = int(num)
+                        await ctx.send(f'```{stock_player[i]}님의 자산이 {int(num)}원으로 변경되었습니다.```')
+                        break
+            else:
+                await ctx.send(f'```현재 플레이어정보에 {member}은(는) 존재하지 않습니다.```')
+        else:
+            await ctx.send(f'```최소 1개 이상 적어주세요.```')
+            
+@bot.command()
+async def 주식자산관리(ctx, member: discord.Member, name, num):
+    if ctx.message.author.id in administrator_id:
+        if name in stock_name:
+            for n in range(len(stock_name)):
+                if name == stock_name[n]:
+                    if member.id in stock_player_id:
+                        for i in range(len(stock_player_id)):
+                            if member.id == stock_player_id[i]:
+                                stock_stocks[i][name] = int(num)
+                                await ctx.send(f'```{stock_player[i]}님의 {name}이 {int(num)}개로 변경되었습니다.```')
+                                break
+                    else:
+                        await ctx.send(f'```현재 플레이어정보에 {member}은(는) 존재하지 않습니다.```')
+        else:
+            await ctx.send(f'```현재 주식정보에 {name}은(는) 존재하지 않습니다.```')
+
 
 # 주식 상폐 여부 함수
 def stock_delisting_check():
-    global delisting_list
-    delisting_list = []
     n = 0
     for price in stock_price_c:
         if price <= delisting:
@@ -790,8 +867,9 @@ def stock_clear():
 @bot.command()
 async def 주식변동(ctx):
     if ctx.message.author.id in administrator_id:
+        global delisting_list
+        delisting_list = []
         stock_change()
-        stock_delisting_check()
         await ctx.send('```주가가 변동되었습니다.```')
 
 @bot.command()
@@ -801,6 +879,7 @@ async def 관리자(ctx):
 
 @bot.command()
 async def 주식정보(ctx):
+    stock_delisting_check()
     s = ''
     sn = stock_info()
     embed = discord.Embed(title = f"```========================\t인정주식\t========================\n\n{sn}```", description = "")
@@ -812,7 +891,7 @@ async def 주식정보(ctx):
                 s += delisting_list[i] + '와(과) '
             else:
                 s += delisting_list[i] + '이(가)'
-        await ctx.send(f'```주가가 30 이하로 떨어져 {s} 상장 폐지 되었습니다.```')
+        await ctx.send(f'```주가가 30원 이하로 떨어져 {s} 상장 폐지 되었습니다.```')
 
 
 @bot.command()
@@ -1161,6 +1240,7 @@ async def on_message(msg):
             for i in range(len(stock_player_id)):
                 s += f'{stock_player[i]} : {debt[i]}' + '\n'
             await msg.channel.send(f'```{s}```')
+
 
 
 
