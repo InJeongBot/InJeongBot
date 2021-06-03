@@ -708,7 +708,7 @@ delisting = 30
 delisting_list = []
 
 @bot.command()
-async def 주식관리(ctx, msg_command, name, **num):
+async def 주식관리(ctx, msg_command, name, num = 0):
     if ctx.message.author.id in administrator_id:
 
         if msg_command == "가격수정":
