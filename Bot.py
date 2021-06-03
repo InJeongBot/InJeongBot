@@ -653,7 +653,6 @@ async def dkssud(ctx, chname, msg):
     await dkssud.add_reaction('⏹')
     await dkssud.add_reaction('⏭')
 
-
 # 추가 기능
 @bot.command(pass_context = True)
 async def create_channel(ctx, chname, msg, topic_msg):
@@ -766,6 +765,7 @@ async def 자산관리(ctx, member: discord.Member, num):
                 await ctx.send(f'```현재 플레이어정보에 {member}은(는) 존재하지 않습니다.```')
         else:
             await ctx.send(f'```최소 1개 이상 적어주세요.```')
+
 @bot.command()
 async def 주식자산관리(ctx, member: discord.Member, name, num):
     if ctx.message.author.id in administrator_id:
@@ -1183,6 +1183,7 @@ async def on_message(msg):
                 await msg.channel.send('```주식의 가격이 초기화 되었습니다.```')
 
         elif msg.content == '주식정보':
+            stock_delisting_check()
             s = ''
             sn = stock_info()
             embed = discord.Embed(title = f"```========================\t인정주식\t========================\n\n{sn}```", description = "")
@@ -1199,8 +1200,9 @@ async def on_message(msg):
         elif msg.content == '주식변동':
             for admin_id in administrator_id:
                 if msg.author.id == admin_id:
+                    global delisting_list
+                    delisting_list = []
                     stock_change()
-                    stock_delisting_check()
                     await msg.channel.send('```주가가 변동되었습니다.```')
 
         elif msg.content == '내주식':
@@ -1240,8 +1242,6 @@ async def on_message(msg):
             for i in range(len(stock_player_id)):
                 s += f'{stock_player[i]} : {debt[i]}' + '\n'
             await msg.channel.send(f'```{s}```')
-
-
 
 
 
