@@ -17,7 +17,6 @@ import os
 
 import random
 
-
 command_prefix = '-'
 bot = commands.Bot(command_prefix = command_prefix)
 client = discord.Client()
@@ -72,7 +71,6 @@ async def on_ready():
 
     if not discord.opus.is_loaded():
         discord.opus.load_opus('opus')
-
 
         
 
@@ -653,6 +651,7 @@ async def dkssud(ctx, chname, msg):
     await dkssud.add_reaction('⏹')
     await dkssud.add_reaction('⏭')
 
+
 # 추가 기능
 @bot.command(pass_context = True)
 async def create_channel(ctx, chname, msg, topic_msg):
@@ -674,17 +673,13 @@ async def 알람(ctx, a_time, msg):
             break
         else:
             pass
-        
-# 추가 기능
-@bot.command(pass_content = True)
-async def 하이빅스비(ctx):
-    await ctx.send(f"{ctx.message.author.mention} 네 주인님")
 
 
 # ㅅㄹ ㄱ 매크로
 # 헤로쿠용
 thffod = ['<솔랭고파일>', '솔랭', 'thffod', 'ㅅㄹ', 'tf', 'ㅅㄺ', '솔ㄹ랭', 'thfffod', '소랭', 'thfod', '설랭', 'tjffod', '듀오', 'ebdh', 'ㄷㅇ', '아이언', 'dkdldjs', '브론즈', 'qmfhswm', 'bronze', 'iron', 'duo', 'solo', 'rank', 'srg', 'SRG', 'thffh', 'fodzm', 'ソロ', 'ランク', '솔 랭']
 gkdl = ['<하이파일>', 'ㅎㅇ', 'gd', '하이', 'gkdl', 'ㅎ2', 'g2', 'hi', 'hello', '해위', '하위']
+
 
 
 
@@ -776,7 +771,7 @@ async def 주식자산관리(ctx, member: discord.Member, name, num):
                         for i in range(len(stock_player_id)):
                             if member.id == stock_player_id[i]:
                                 stock_stocks[i][name] = int(num)
-                                await ctx.send(f'```{stock_player[i]}님의 {name}이 {int(num)}개로 변경되었습니다.```')
+                                await ctx.send(f'```{stock_player[i]}님의 {name}이(가) {int(num)}개로 변경되었습니다.```')
                                 break
                     else:
                         await ctx.send(f'```현재 플레이어정보에 {member}은(는) 존재하지 않습니다.```')
@@ -1157,7 +1152,7 @@ async def on_message(msg):
 
     # 주식 기능
     elif topic is not None and '#인정주식' in topic:
-
+        global delisting_list
         await msg.delete()
         if msg.content == '도움말':
             s = ''
@@ -1195,12 +1190,11 @@ async def on_message(msg):
                         s += delisting_list[i] + '와(과) '
                     else:
                         s += delisting_list[i] + '이(가)'
-                await msg.channel.send(f'```주가가 30이하로 떨어져 {s} 상장 폐지 되었습니다.```')
+                await msg.channel.send(f'```주가가 30 이하로 떨어져 {s} 상장 폐지 되었습니다.```')
 
         elif msg.content == '주식변동':
             for admin_id in administrator_id:
                 if msg.author.id == admin_id:
-                    global delisting_list
                     delisting_list = []
                     stock_change()
                     await msg.channel.send('```주가가 변동되었습니다.```')
