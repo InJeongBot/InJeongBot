@@ -1245,5 +1245,5 @@ async def on_message(msg):
             await msg.channel.send(f'```{s}```')
 
 
-
+TOKEN = os.environ['BOT_TOKEN']
 bot.run(TOKEN)
