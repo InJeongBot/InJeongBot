@@ -1,5 +1,6 @@
 import discord
 from discord.ext import commands
+from discord.gateway import DiscordClientWebSocketResponse
 from youtube_dl import YoutubeDL
 import time
 import asyncio
@@ -16,6 +17,7 @@ from urllib.parse import quote_plus
 import os
 
 import random
+
 
 command_prefix = '-'
 bot = commands.Bot(command_prefix = command_prefix)
@@ -71,6 +73,7 @@ async def on_ready():
 
     if not discord.opus.is_loaded():
         discord.opus.load_opus('opus')
+
 
         
 
@@ -206,7 +209,10 @@ async def leave(ctx):
     except:
         await ctx.send("인정봇이 음성 채널에 들어가 있지 않네요")
 
-
+# Command /p 노래제목
+@bot.command()
+async def p(ctx, *, msg):
+    await play(ctx, msg)
 
 # Command /play 노래제목
 @bot.command()
@@ -255,21 +261,21 @@ async def play(ctx, *, msg):
             info = ydl.extract_info(url, download=False)
         URL = info['formats'][0]['url']
         
-        try:
-            embed = discord.Embed(title = entireText, description = "")
-            embed.set_image(url = thumbnail)
-            await ctx.send(embed=embed)
-        except:
-            pass
-        
-        
         vc.play(discord.FFmpegPCMAudio(URL, **FFMPEG_OPTIONS), after=lambda e: music_play_next(ctx))
 
     else:
         music_user.append(msg)
         result, URLTEST = f_music_title(msg)
         music_queue.append(URLTEST)
+        
+        await queue(ctx)
 
+    try:
+        embed = discord.Embed(title = entireText, description = "")
+        embed.set_image(url = thumbnail)
+        await ctx.send(embed=embed)
+    except:
+        pass
 
 # Command /queuedel (숫자)
 @bot.command()
@@ -652,6 +658,7 @@ async def dkssud(ctx, chname, msg):
     await dkssud.add_reaction('⏭')
 
 
+
 # 추가 기능
 @bot.command(pass_context = True)
 async def create_channel(ctx, chname, msg, topic_msg):
@@ -673,13 +680,13 @@ async def 알람(ctx, a_time, msg):
             break
         else:
             pass
+        
+
 
 
 # ㅅㄹ ㄱ 매크로
-# 헤로쿠용
 thffod = ['<솔랭고파일>', '솔랭', 'thffod', 'ㅅㄹ', 'tf', 'ㅅㄺ', '솔ㄹ랭', 'thfffod', '소랭', 'thfod', '설랭', 'tjffod', '듀오', 'ebdh', 'ㄷㅇ', '아이언', 'dkdldjs', '브론즈', 'qmfhswm', 'bronze', 'iron', 'duo', 'solo', 'rank', 'srg', 'SRG', 'thffh', 'fodzm', 'ソロ', 'ランク', '솔 랭']
 gkdl = ['<하이파일>', 'ㅎㅇ', 'gd', '하이', 'gkdl', 'ㅎ2', 'g2', 'hi', 'hello', '해위', '하위']
-
 
 
 
@@ -738,7 +745,7 @@ async def 주식관리(ctx, msg_command, name, num = 0):
                         del stock_price_c[i]
                         del stock_price_p[i]
                         for i in range(len(stock_stocks)):
-                            del stock_stocks[name]
+                            del stock_stocks[i][name]
                         await ctx.send(f'```{name}이(가) 삭제되었습니다.```')
                         break
             else:
@@ -877,7 +884,7 @@ async def 주식정보(ctx):
     stock_delisting_check()
     s = ''
     sn = stock_info()
-    embed = discord.Embed(title = f"```========================\t인정주식\t========================\n\n{sn}```", description = "")
+    embed = discord.Embed(title = f"```======================\t인정주식\t======================\n\n{sn}```", description = "")
     embed.set_author(name = "   ㅇㅈ#6079", icon_url = 'https://cdn.discordapp.com/avatars/270403684389748736/621692a4dddbf42dd2b01df1301eebe6.png')
     await ctx.send(embed=embed)
     if len(delisting_list) != 0:
@@ -1239,5 +1246,4 @@ async def on_message(msg):
 
 
 
-TOKEN = os.environ['BOT_TOKEN']
 bot.run(TOKEN)
