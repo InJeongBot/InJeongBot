@@ -237,7 +237,7 @@ async def play(ctx, *, msg):
         FFMPEG_OPTIONS = {'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5', 'options': '-vn'}
         
         driver = load_chrome_driver()
-        if 'https' in msg:
+        if msg[:5] in "https://www.youtube.com/results?search_query=":
             driver.get(msg)
         else:
             driver.get("https://www.youtube.com/results?search_query="+msg)
